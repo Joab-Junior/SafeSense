@@ -23,14 +23,16 @@
 - **Sensor**: MQ-2 para detecção de gases inflamáveis.
 - **Microcontrolador**: ESP32 com Wi-Fi integrado.
 - **Fonte de Alimentação**: Bateria recarregável de 5V.
+- **Conectividade**: Integração com serviços na nuvem para suporte a IoT e acessibilidade global.
 
 ### Aplicativo Mobile
 - **Framework**: Ionic Framework.
 - **Estado Atual**: Projeto inicial criado, desenvolvimento a ser iniciado.
 - **Funcionalidades Planejadas**:
-  - Configuração do dispositivo via Bluetooth.
+  - Configuração do dispositivo via internet, utilizando protocolos IoT.
   - Recebimento de alertas em tempo real.
   - Histórico de detecções.
+  - Monitoramento e controle remoto, acessível de qualquer lugar.
 
 ---
 
@@ -78,5 +80,5 @@ Este projeto é colaborativo e depende das contribuições de cada membro da equ
 
 ## Roadmap
 - [ ] Finalizar estrutura inicial do aplicativo (backend e frontend).
-- [ ] Criar interface de configuração Bluetooth.
+- [ ] Implementar integração IoT com serviços na nuvem.
 - [ ] Realizar integração dispositivo-aplicativo.
