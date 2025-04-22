@@ -20,7 +20,7 @@
 ## Tecnologias Utilizadas
 
 ### Dispositivo Físico
-- **Sensor**: MQ-2 para detecção de gases inflamáveis.
+- **Sensor**: MQ-4 para detecção de gases inflamáveis.
 - **Microcontrolador**: ESP32 com Wi-Fi integrado.
 - **Fonte de Alimentação**: Bateria recarregável de 5V.
 - **Conectividade**: Integração com serviços na nuvem para suporte a IoT e acessibilidade global.
