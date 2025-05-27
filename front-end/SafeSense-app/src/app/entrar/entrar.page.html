@@ -1,0 +1,50 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Entrar</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="entrarForm" (ngSubmit)="login()">
+    <ion-list lines="full">
+
+      <ion-item>
+        <ion-label position="floating">Email</ion-label>
+        <ion-input
+          type="email"
+          formControlName="email"
+          required
+        ></ion-input>
+      </ion-item>
+      <ion-note color="danger" *ngIf="entrarForm.get('email')?.touched && entrarForm.get('email')?.invalid">
+        <small *ngIf="entrarForm.get('email')?.errors?.['required']">O e-mail é obrigatório.</small>
+        <small *ngIf="entrarForm.get('email')?.errors?.['email']">E-mail inválido.</small>
+      </ion-note>
+
+      <ion-item>
+        <ion-label position="floating">Senha</ion-label>
+        <ion-input
+          type="password"
+          formControlName="password"
+          required
+        ></ion-input>
+      </ion-item>
+      <ion-note color="danger" *ngIf="entrarForm.get('password')?.touched && entrarForm.get('password')?.invalid">
+        <small *ngIf="entrarForm.get('password')?.errors?.['required']">A senha é obrigatória.</small>
+      </ion-note>
+
+    </ion-list>
+
+    <ion-button
+      expand="block"
+      type="submit"
+      color="primary"
+      [disabled]="entrarForm.invalid"
+    >
+      Entrar
+    </ion-button>
+  </form>
+</ion-content>

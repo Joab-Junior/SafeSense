@@ -6,10 +6,13 @@
 
 ## Estrutura de Arquivos
 
-
 - `/Project-SafeSense`: Pasta destinada ao desenvolvimento do aplicativo mobile usando o **Ionic Framework**.
-  - **Atualmente**: Contém apenas a estrutura inicial do projeto.
+  - **Atualmente**: Com o front e o design parcialmente completo.
   - Futuro: Código-fonte do aplicativo e recursos relacionados.
+
+- `/back-end/SafeSenseAPIManager`: API desenvolvida em **PHP** com suporte a autenticação via JWT.
+  - Registro e login de usuários funcionais.
+  - Estrutura modularizada por segurança e organização.
 
 - `/docs`: Documentação técnica (A SER CRIADO).
   - **manual_de_usuario.pdf**: Guia para usuários finais.
@@ -26,9 +29,15 @@
 - **Conectividade**: Integração com serviços na nuvem para suporte a IoT e acessibilidade global.
 
 ### Aplicativo Mobile
-- **Framework**: Ionic Framework.
-- **Estado Atual**: Projeto inicial criado, desenvolvimento a ser iniciado.
-- **Funcionalidades Planejadas**:
+- **Framework**: Ionic Framework + Angular.
+- **Estado Atual**: Design e front-end avançados.
+- **Funcionalidades Implementadas**:
+  - Tela de login com validação visual e feedback em tempo real.
+  - Validação forte de senha com mensagens específicas.
+  - Toasts de resposta e tela de carregamento (loading).
+  - Redirecionamento pós-login e proteção de rotas com AuthGuard.
+
+- **Funcionalidades Futuras**:
   - Configuração do dispositivo via internet, utilizando protocolos IoT.
   - Recebimento de alertas em tempo real.
   - Histórico de detecções.
@@ -36,7 +45,7 @@
 
 ---
 
-# Como Clonar o Repositório
+## Como Clonar o Repositório
 
 Siga os passos abaixo para clonar o repositório do projeto SafeSense em sua máquina local:
 
@@ -79,6 +88,17 @@ Este projeto é colaborativo e depende das contribuições de cada membro da equ
 ---
 
 ## Roadmap
+
+- [x] Sistema de login com validação de senha
+- [x] Backend em PHP com autenticação JWT
 - [ ] Finalizar estrutura inicial do aplicativo (backend e frontend).
 - [ ] Implementar integração IoT com serviços na nuvem.
 - [ ] Realizar integração dispositivo-aplicativo.
+- [ ] Adicionar notificações em tempo real.
+- [ ] Exibir histórico de vazamentos no app.
+
+---
+
+## Licença
+
+Projeto privado. Direitos reservados à equipe do SafeSense.

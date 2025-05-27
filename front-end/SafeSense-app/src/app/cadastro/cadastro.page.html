@@ -1,0 +1,90 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Cadastro</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="cadastroForm" (ngSubmit)="createAccount()">
+    <ion-list lines="full">
+
+      <ion-item>
+        <ion-label position="floating">Nome Completo</ion-label>
+        <ion-input formControlName="name" type="text" required></ion-input>
+      </ion-item>
+      <ion-note color="danger" *ngIf="cadastroForm.get('name')?.touched && cadastroForm.get('name')?.invalid">
+        <small *ngIf="cadastroForm.get('name')?.errors?.['required']">O nome é obrigatório.</small>
+        <small *ngIf="cadastroForm.get('name')?.errors?.['minlength']">Nome muito curto.</small>
+      </ion-note>
+
+      <ion-item>
+        <ion-label position="floating">Email</ion-label>
+        <ion-input formControlName="email" type="email" required></ion-input>
+      </ion-item>
+      <ion-note color="danger" *ngIf="cadastroForm.get('email')?.touched && cadastroForm.get('email')?.invalid">
+        <small *ngIf="cadastroForm.get('email')?.errors?.['required']">O e-mail é obrigatório.</small>
+        <small *ngIf="cadastroForm.get('email')?.errors?.['email']">E-mail inválido.</small>
+      </ion-note>
+
+      <ion-item>
+        <ion-label position="floating">Senha</ion-label>
+        <ion-input formControlName="password" type="password" required></ion-input>
+      </ion-item>
+
+      <ion-list lines="none" class="senha-requisitos">
+        <ion-item lines="none" detail="false" *ngIf="senha">
+          <ion-icon slot="start" [color]="temMinLength ? 'success' : 'danger'"
+            [name]="temMinLength ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+          <ion-label>Mínimo 6 caracteres</ion-label>
+        </ion-item>
+
+        <ion-item lines="none" detail="false" *ngIf="senha">
+          <ion-icon slot="start" [color]="temMaiuscula ? 'success' : 'danger'"
+            [name]="temMaiuscula ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+          <ion-label>Letra maiúscula</ion-label>
+        </ion-item>
+
+        <ion-item lines="none" detail="false" *ngIf="senha">
+          <ion-icon slot="start" [color]="temMinuscula ? 'success' : 'danger'"
+            [name]="temMinuscula ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+          <ion-label>Letra minúscula</ion-label>
+        </ion-item>
+
+        <ion-item lines="none" detail="false" *ngIf="senha">
+          <ion-icon slot="start" [color]="temNumero ? 'success' : 'danger'"
+            [name]="temNumero ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+          <ion-label>Número</ion-label>
+        </ion-item>
+
+        <ion-item lines="none" detail="false" *ngIf="senha">
+          <ion-icon slot="start" [color]="temEspecial ? 'success' : 'danger'"
+            [name]="temEspecial ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+          <ion-label>Caractere especial</ion-label>
+        </ion-item>
+      </ion-list>
+      <ion-note color="danger" *ngIf="cadastroForm.get('password')?.touched && cadastroForm.get('password')?.invalid">
+        <small *ngIf="cadastroForm.get('password')?.errors?.['required']">A senha é obrigatória.</small>
+        <small *ngIf="cadastroForm.get('password')?.errors?.['passwordValidator']">Senha não atende os
+          critérios.</small>
+      </ion-note>
+
+      <ion-item>
+        <ion-label position="floating">Confirmar Senha</ion-label>
+        <ion-input formControlName="confirmPassword" type="password" required></ion-input>
+      </ion-item>
+      <ion-note color="danger"
+        *ngIf="cadastroForm.get('confirmPassword')?.touched && cadastroForm.get('confirmPassword')?.invalid">
+        <small *ngIf="cadastroForm.get('confirmPassword')?.errors?.['required']">A confirmação da senha é
+          obrigatória.</small>
+      </ion-note>
+
+    </ion-list>
+
+    <ion-button expand="block" type="submit" color="primary" [disabled]="cadastroForm.invalid">
+      Cadastrar
+    </ion-button>
+  </form>
+</ion-content>
