@@ -25,7 +25,7 @@ export class AppComponent {
       this.router.navigate(['/inicio']);
     } else {
       // Se não tiver token ou estiver expirado, manda para o login
-      this.router.navigate(['/entrar']);
+      this.router.navigate(['/']);
     }
   }
 

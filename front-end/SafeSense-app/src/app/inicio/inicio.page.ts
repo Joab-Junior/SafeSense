@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
+import { AccountAuthHandleService } from '../services/AccountHandle/account-auth-handle.service';
 
 
 @Component({
@@ -10,10 +11,12 @@ import { NavController } from '@ionic/angular';
 })
 export class InicioPage implements OnInit {
 
-  constructor(private navCtrl: NavController) { }
+  constructor(private navCtrl: NavController, private authService: AccountAuthHandleService) { }
   
-  voltar() {
-    this.navCtrl.back();
+  goBack() {
+    if (!this.authService.getToken) {
+      this.navCtrl.back();
+    }
   }
 
   ngOnInit() {
