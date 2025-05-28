@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController, NavController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { AlertController, NavController, ToastController } from '@ionic/angular';
+import { DeleteAccountHandleService } from '../services/AccountHandle/AccountDeletion/delete-account-handle.service';
+import { AccountAuthHandleService } from '../services/AccountHandle/AccounAuth/account-auth-handle.service';
 
 @Component({
   selector: 'app-perfil',
@@ -9,10 +12,15 @@ import { AlertController, NavController } from '@ionic/angular';
 })
 export class PerfilPage implements OnInit {
 
-  constructor(private alertCtrl: AlertController,
-    private navCtrl: NavController
+  constructor(
+    private alertCtrl: AlertController,
+    private navCtrl: NavController,
+    private router: Router,
+    private toastCtrl: ToastController,
+    private deleteAccountHandler: DeleteAccountHandleService,
+    private authService: AccountAuthHandleService
   ) { }
-  voltar() {
+  goBack() {
     this.navCtrl.back();
   }
   
@@ -33,10 +41,10 @@ export class PerfilPage implements OnInit {
     console.log('Abrir Informações da Conta');
   }
 
-  async deletarConta() {
+  async confirmExclution() {
     const alert = await this.alertCtrl.create({
       header: 'Confirmar',
-      message: 'Tem certeza que deseja deletar sua conta?',
+      message: 'Tem certeza que deseja deletar sua conta? Essa ação não pode ser desfeita.',
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {
@@ -44,7 +52,7 @@ export class PerfilPage implements OnInit {
           role: 'destructive',
           handler: () => {
             console.log('Conta deletada!');
-            this.voltarParaPrincipal();
+            this.deleteAccount();
           },
         },
       ],
@@ -53,9 +61,29 @@ export class PerfilPage implements OnInit {
     await alert.present();
   }
 
-  voltarParaPrincipal() {
+  deleteAccount() {
     // Redireciona para a tela principal
-    this.navCtrl.navigateRoot('/home');
+    this.deleteAccountHandler.deleteAccount().subscribe({
+      next: async () => {
+        this.authService.logout();
+
+        await this.router.navigate(['/']);
+        const toast = await this.toastCtrl.create({
+          message: 'Conta deletada com sucesso.',
+          duration: 2000,
+          color: 'success'
+        });
+        toast.present()
+      },
+      error: async (err) => {
+        const toast = await this.toastCtrl.create({
+          message: err.message || 'Erro ao deletar conta.',
+          duration: 2000,
+          color: 'danger'
+        });
+        toast.present();
+      }
+    });
   }
 
   ngOnInit() {

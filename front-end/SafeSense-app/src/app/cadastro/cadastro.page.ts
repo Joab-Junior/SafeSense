@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CreateAccountHandleService, CreateAccountData } from '../services/AccountHandle/create-account-handle.service';
+import { CreateAccountHandleService, CreateAccountData } from '../services/AccountHandle/AccountCreation/create-account-handle.service';
 import { ToastController, LoadingController } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { passwordValidator } from 'src/utils/validators';

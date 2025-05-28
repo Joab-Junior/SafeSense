@@ -6,40 +6,42 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Dotenv\Dotenv;
 
-// Carrega variáveis de ambiente uma única vez
-$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
-$dotenv->load();
+class JWTHandler {
+    private $key;
 
-// Define a chave secreta globalmente
-$key = $_ENV['JWT_SECRET'] ?? $_SERVER['JWT_SECRET'] ?? null;
+    public function __construct() {
+        // Carrega variáveis de ambiente se ainda não carregadas
+        if (!isset($_ENV['JWT_SECRET']) && !isset($_SERVER['JWT_SECRET'])) {
+            $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+            $dotenv->load();
+        }
 
-if (!$key) {
-    http_response_code(500);
-    jsonResponse("error", "Chave secreta JWT não definida.");
-    exit;
+        $this->key = $_ENV['JWT_SECRET'] ?? $_SERVER['JWT_SECRET'] ?? null;
+
+        if (!$this->key) {
+            http_response_code(500);
+            jsonResponse("error", "Chave secreta JWT não definida.");
+            exit;
+        }
+    }
+
+    /**
+     * Gera um token JWT
+     */
+    public function generateToken($userId, $email) {
+        $payload = [
+            'user_id' => $userId,
+            'email'   => $email,
+            'exp'     => time() + 60 * 60 * 4 // expira em 4 horas
+        ];
+
+        return JWT::encode($payload, $this->key, 'HS256');
+    }
+
+    /**
+     * Valida um token JWT e retorna os dados decodificados
+     */
+    public function validateToken($token) {
+        return JWT::decode($token, new Key($this->key, 'HS256'));
+    }
 }
-
-/**
- * Gera um token JWT
- */
-function generateToken($userId, $email) {
-    global $key;
-
-    $payload = [
-        'user_id' => $userId,
-        'email' => $email,
-        'exp' => time() + 60 * 60 * 4
-    ];
-
-    return JWT::encode($payload, $key, 'HS256');
-}
-
-/**
- * Valida um token JWT e retorna os dados decodificados
- */
-function validateToken($token) {
-    global $key;
-
-    return JWT::decode($token, new Key($key, 'HS256'));
-}
-?>

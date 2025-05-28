@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost/SafeSenseAPIManager/'
+  apiUrl: 'http://localhost/SafeSenseAPIManager/auth/'
 };
 
 /*

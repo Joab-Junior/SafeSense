@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
-import { AccountAuthHandleService } from '../services/AccountHandle/account-auth-handle.service';
+import { AccountAuthHandleService } from '../services/AccountHandle/AccounAuth/account-auth-handle.service';
 
 @Component({
   selector: 'app-configuracoes',

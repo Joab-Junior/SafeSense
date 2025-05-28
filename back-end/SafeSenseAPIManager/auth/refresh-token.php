@@ -1,11 +1,18 @@
 <?php
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
+    ini_set('display_errors', 0);
+    ini_set('log_errors', 1);
+    ini_set('error_log', __DIR__ . '/../logs/php_errors.log');
     error_reporting(E_ALL);
 
     include_once __DIR__ . '/../config/headers.php';
     include_once __DIR__ . '/../helper/jwtHandler.php';
     include_once __DIR__ . '/../config/response.php';
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        http_response_code(405);
+        jsonResponse('error', 'Método não permitido. Use POST.');
+        exit;
+    }
 
     // Pega o token do header
     $headers = getallheaders();
@@ -19,12 +26,14 @@
 
     $token = $matches[1];
 
+    $jwt = new JWTHandler();
+
     try {
         // Usa a função que já criamos
-        $decoded = validateToken($token);
+        $decoded = $jwt->validateToken($token);
 
         // Gera um novo token com base nos dados decodificados
-        $newToken = generateToken($decoded->user_id, $decoded->email);
+        $newToken = $jwt->generateToken($decoded->user_id, $decoded->email);
 
         jsonResponse("success", null, $newToken);
 

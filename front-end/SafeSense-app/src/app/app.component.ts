@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AccountAuthHandleService } from './services/AccountHandle/account-auth-handle.service';
+import { AccountAuthHandleService } from './services/AccountHandle/AccounAuth/account-auth-handle.service';
 
 @Component({
   selector: 'app-root',

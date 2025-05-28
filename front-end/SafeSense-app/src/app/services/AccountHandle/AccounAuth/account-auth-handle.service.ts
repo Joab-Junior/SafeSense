@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { jwtDecode } from 'jwt-decode';
 import { map } from 'rxjs/operators';
+import { ErrorHandlerService } from '../../ErrorService/error-handler.service';
 
 export interface AuthAccountData {
   email: string;
@@ -28,15 +29,15 @@ interface JwtPayload {
 export class AccountAuthHandleService {
 
   private apiUrl = environment.apiUrl;
-  private loginEndpoint = 'auth/login.php';
-  private refreshTokenEndpoint = 'auth/refresh-token.php';
+  private loginEndpoint = 'login.php';
+  private refreshTokenEndpoint = 'refresh-token.php';
   private tokenKey = 'jwtToken';
   private refreshTokenTimeoutId?: any;
   private logoutTimeout: any = null;
   private isRefreshing = false;
   private refreshSubscribers: ((token: string) => void)[] = [];
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private errorHandler: ErrorHandlerService) { }
 
   // LOGIN
   login(data: AuthAccountData): Observable<LoginResponse> {
@@ -48,7 +49,7 @@ export class AccountAuthHandleService {
           this.scheduleAutoLogout(res.data);
         }
       }),
-      catchError(this.handleError)
+      catchError(this.errorHandler.handleError)
     );
   }
 
@@ -167,7 +168,7 @@ export class AccountAuthHandleService {
 
     this.isRefreshing = true;
 
-    return this.http.get<{ status: string, token?: string }>(`${this.apiUrl}${this.refreshTokenEndpoint}`, {
+    return this.http.post<{ status: string, token?: string }>(`${this.apiUrl}${this.refreshTokenEndpoint}`, {
       headers: { Authorization: `Bearer ${token}` }
     }).pipe(
       tap(res => {
@@ -219,35 +220,6 @@ export class AccountAuthHandleService {
 
   isRefreshInProgress(): boolean {
     return this.isRefreshing;
-  }
-
-  // TRATAMENTO DE ERROS
-  private handleError(error: HttpErrorResponse) {
-    let message = 'Erro desconhecido.';
-
-    // Caso o backend tenha retornado uma resposta com JSON
-    if (error.error) {
-      // Se veio como string (ex: JSON bruto)
-      if (typeof error.error === 'string') {
-        try {
-          const parsed = JSON.parse(error.error);
-          message = parsed.message || message;
-        } catch {
-          message = error.error; // Caso não seja JSON válido
-        }
-      }
-      // Se já veio como objeto (Angular já parseou)
-      else if (typeof error.error === 'object' && error.error.message) {
-        message = error.error.message;
-      }
-    }
-    // Erro do lado do cliente
-    else if (error.error instanceof ErrorEvent) {
-      message = `Erro no cliente: ${error.error.message}`;
-    }
-
-    console.error('Erro capturado:', error); // <-- Ajuda a depurar melhor
-    return throwError(() => new Error(message));
   }
 
 }
