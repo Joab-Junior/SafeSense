@@ -6,6 +6,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { jwtDecode } from 'jwt-decode';
 import { map } from 'rxjs/operators';
 import { ErrorHandlerService } from '../../ErrorService/error-handler.service';
+import { AuthHeaderService } from '../../HeaderService/auth-header.service';
 
 export interface AuthAccountData {
   email: string;
@@ -29,19 +30,21 @@ interface JwtPayload {
 export class AccountAuthHandleService {
 
   private apiUrl = environment.apiUrl;
-  private loginEndpoint = 'login.php';
-  private refreshTokenEndpoint = 'refresh-token.php';
+  private loginEndpoint = '/login.php';
+  private refreshTokenEndpoint = '/refresh-token.php';
   private tokenKey = 'jwtToken';
   private refreshTokenTimeoutId?: any;
   private logoutTimeout: any = null;
   private isRefreshing = false;
   private refreshSubscribers: ((token: string) => void)[] = [];
 
-  constructor(private http: HttpClient, private errorHandler: ErrorHandlerService) { }
+  constructor(private http: HttpClient, private errorHandler: ErrorHandlerService, private authHeader: AuthHeaderService) { }
 
   // LOGIN
   login(data: AuthAccountData): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}${this.loginEndpoint}`, data).pipe(
+    return this.http.post<LoginResponse>(`${this.apiUrl}${this.loginEndpoint}`, data, {
+      headers: this.authHeader.getHeaders()
+    }).pipe(
       tap(res => {
         if (res.status === 'success' && res.data) {
           localStorage.setItem(this.tokenKey, res.data);
@@ -168,8 +171,8 @@ export class AccountAuthHandleService {
 
     this.isRefreshing = true;
 
-    return this.http.post<{ status: string, token?: string }>(`${this.apiUrl}${this.refreshTokenEndpoint}`, {
-      headers: { Authorization: `Bearer ${token}` }
+    return this.http.post<{ status: string, token?: string }>(`${this.apiUrl}${this.refreshTokenEndpoint}`, {}, {
+      headers: { Authorization: `Bearer ${token}`, ...this.authHeader.getHeaders()}
     }).pipe(
       tap(res => {
         if (res.status === 'success' && res.token) {

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController, NavController } from '@ionic/angular';
+import { AlertController, NavController, } from '@ionic/angular';
 import { AccountAuthHandleService } from '../services/AccountHandle/AccounAuth/account-auth-handle.service';
 
 @Component({
@@ -10,21 +10,20 @@ import { AccountAuthHandleService } from '../services/AccountHandle/AccounAuth/a
 })
 export class ConfiguracoesPage implements OnInit {
   darkMode = false;
+  isModalOpen = false;
 
-
-  constructor(
-    private alertCtrl: AlertController,
-    private navCtrl: NavController,
-    private authService: AccountAuthHandleService
-  ) { }
-
-  voltar() {
-    this.navCtrl.back();
+  setOpen(isOpen: boolean) {
+    this.isModalOpen = isOpen;
   }
+  constructor(private alertCtrl: AlertController, private navCtrl: NavController, private authService: AccountAuthHandleService) { }
+
+  // voltar() {
+  //   this.navCtrl.back();
+  // }
 
   abrirPerfil() {
     console.log('Ir para conta');
-    this.navCtrl.navigateForward('/perfil');
+    // this.navCtrl.navigateForward('/perfil');
   }
 
   abrirTemas() {
@@ -47,7 +46,7 @@ export class ConfiguracoesPage implements OnInit {
     console.log('Ir para sobre o app');
   }
 
-  async sair() {
+  async logout() {
     const alert = await this.alertCtrl.create({
       header: 'Confirmar',
       message: 'Tem certeza que sair de sua conta?',
@@ -59,7 +58,7 @@ export class ConfiguracoesPage implements OnInit {
           handler: () => {
             console.log('Você saiu de sua conta!');
             this.authService.logout();
-            this.voltarParaPrincipal();
+            this.goBackToHome();
           },
         },
       ],
@@ -68,7 +67,7 @@ export class ConfiguracoesPage implements OnInit {
     await alert.present();
   }
 
-  voltarParaPrincipal() {
+  goBackToHome() {
     // Redireciona para a tela principal
     this.navCtrl.navigateRoot('/home');
   }

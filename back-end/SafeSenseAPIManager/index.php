@@ -1,0 +1,61 @@
+<?php
+require_once __DIR__ . '/config/headers.php';
+include_once __DIR__ . '/config/response.php';
+
+use Dotenv\Dotenv;
+
+// Carrega variáveis de ambiente
+$dotenv = Dotenv::createImmutable(__DIR__ . '/./');
+$dotenv->load();
+
+// Captura os headers HTTP
+$headers = getAllHeadersPortable();
+
+// Tenta pegar o segredo do header 'X-App-Secret'
+$appSecret = $headers['x-app-secret'] ?? '';
+
+// Se não existir no header, tenta pegar do corpo JSON (opcional)
+if (!$appSecret) {
+    $input = json_decode(file_get_contents('php://input'), true);
+    $appSecret = $input['appSecret'] ?? '';
+}
+
+// Compara com o valor correto do .env
+$envSecret = $_ENV['APP_SECRET'] ?? null;
+
+// Valida o segredo
+if (!$envSecret || $appSecret !== $envSecret) {
+    jsonResponse('error', 'Acesso negado: app secret inválido.', 403);
+}
+
+// Roteamento
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$method = $_SERVER['REQUEST_METHOD'];
+
+switch ($uri) {
+    case 'https://safesense-api-manager-development.up.railway.app/auth/delete-account.php':
+        if ($method === 'DELETE') {
+            require __DIR__ . '/auth/delete-account.php';
+        } else {
+            http_response_code(405);
+            jsonResponse('error', 'Método não permitido.');
+        }
+    break;
+
+    case 'https://safesense-api-manager-development.up.railway.app/auth/login.php':
+        require __DIR__ . '/auth/login.php';
+    break;
+
+    case 'https://safesense-api-manager-development.up.railway.app/auth/register.php':
+        require __DIR__ . '/auth/register.php';
+    break;
+
+    case 'https://safesense-api-manager-development.up.railway.app/auth/refresh-token.php':
+        require __DIR__ . '/auth/refresh-token.php';
+    break;
+
+    default:
+        http_response_code(404);
+        jsonResponse('error', 'Rota não encontrada.');
+    break;
+}

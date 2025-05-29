@@ -12,9 +12,20 @@ import { provideHttpClient } from '@angular/common/http';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 
+import {
+  IonButton,
+  IonButtons,
+  IonContent,
+  IonHeader,
+  IonModal,
+  IonTitle,
+  IonToolbar,
+} from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
+  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, FormsModule],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, provideHttpClient(),
   {
     provide: HTTP_INTERCEPTORS,

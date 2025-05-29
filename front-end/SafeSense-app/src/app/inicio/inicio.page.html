@@ -8,13 +8,13 @@
     <div class="menu">
     <ion-button expand="block" fill="outline" routerLink="/perfil">Perfil</ion-button>
     <br>
-    <ion-button expand="block" fill="outline">Histórico</ion-button>
+    <ion-button expand="block" fill="outline" routerLink="/historico">Histórico</ion-button>
     <br>
-    <ion-button expand="block" fill="outline">Relatório</ion-button>
+    <ion-button expand="block" fill="outline" routerLink="/relatorio">Relatório</ion-button>
     <br>
-    <ion-button expand="block" fill="outline">Chatbox</ion-button>
+    <ion-button expand="block" fill="outline" routerLink="/chatbox">Chatbox</ion-button>
     <br>
-    <ion-button expand="block" fill="outline">Atualizações</ion-button>
+    <ion-button expand="block" fill="outline" routerLink="/atualizacoes">Atualizações</ion-button>
     </div>
   </ion-content>
   <ion-footer>
@@ -30,7 +30,9 @@
       <ion-title>SafeSense</ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-content class="ion-padding"> Tap the button in the toolbar to open the menu. </ion-content>
+  <ion-content class="ion-padding center-image">
+    <img src="assets/img/Logo.png" alt="Logo" />
+  </ion-content>
   <ion-footer class="rodape">
     <div class="footer-icons">
       <ion-button class="icon-button" fill="clear" (click)="goBack()">

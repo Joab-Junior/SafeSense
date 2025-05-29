@@ -1,0 +1,61 @@
+<!-- <ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>tema</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">tema</ion-title>
+    </ion-toolbar>
+  </ion-header>
+</ion-content>
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button default-href="#"></ion-back-button>
+    </ion-buttons>
+    <ion-title>temas</ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="dark">
+        <ion-icon slot="icon-only" ios="person-circle-outline" md="person-circle"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list-header>Appearance</ion-list-header>
+  <ion-list [inset]="true">
+    <ion-item>
+      <ion-toggle [(ngModel)]="paletteToggle" (ionChange)="toggleChange($event)" justify="space-between"
+        >Dark Mode</ion-toggle>
+    </ion-item>
+  </ion-list>
+</ion-content> -->
+
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Temas</ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="dark">
+        <ion-icon slot="icon-only" ios="person-circle-outline" md="person-circle"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-list-header>Aparência</ion-list-header>
+  <ion-list [inset]="true">
+    <ion-item>
+      <ion-toggle [(ngModel)]="paletteToggle" (ionChange)="toggleChange($event)" justify="space-between">
+        Dark Mode
+      </ion-toggle>
+    </ion-item>
+  </ion-list>
+</ion-content>

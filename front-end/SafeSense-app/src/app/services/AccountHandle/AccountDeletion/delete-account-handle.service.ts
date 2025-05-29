@@ -4,6 +4,7 @@ import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { ErrorHandlerService } from '../../ErrorService/error-handler.service';
+import { AuthHeaderService } from '../../HeaderService/auth-header.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +12,9 @@ import { ErrorHandlerService } from '../../ErrorService/error-handler.service';
 export class DeleteAccountHandleService {
 
   private apiUrl = environment.apiUrl;
-  private deleteAccountEndpoint = 'delete-account.php';
+  private deleteAccountEndpoint = '/delete-account.php';
 
-  constructor(private authService: AccountAuthHandleService, private http: HttpClient, private errorHandler: ErrorHandlerService) { }
+  constructor(private authService: AccountAuthHandleService, private http: HttpClient, private errorHandler: ErrorHandlerService, private authHeader: AuthHeaderService) { }
 
   deleteAccount(): Observable<any> {
     const token = this.authService.getToken();
@@ -22,9 +23,7 @@ export class DeleteAccountHandleService {
     }
 
     return this.http.delete(`${this.apiUrl}${this.deleteAccountEndpoint}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      headers: { Authorization: `Bearer ${token}`, ...this.authHeader.getHeaders()}
     }).pipe(
       catchError(this.errorHandler.handleError)
     );

@@ -1,3 +1,4 @@
+
 .rodape {
     background-color: #f8f8f8;
     padding: 10px 0;
@@ -24,3 +25,15 @@
   .icon-button:active ion-icon {
     color: #007bff; /* cor ao clicar */
   }
+  .center-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%; // ocupa a altura total do conteúdo
+}
+
+.center-image img {
+  max-width: 100%;
+  height: auto;
+  text-align: center;
+}

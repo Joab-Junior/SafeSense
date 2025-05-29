@@ -1,0 +1,26 @@
+.mensagem {
+  margin: 8px 0;
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 70%;
+  word-wrap: break-word;
+}
+
+.msg-eu {
+  background-color: #d1e7dd;
+  align-self: flex-end;
+  margin-left: auto;
+}
+
+.msg-bot {
+  background-color: #f8d7da;
+  align-self: flex-start;
+  margin-right: auto;
+}
+
+.respostas-prontas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-atualizacoes',
@@ -8,9 +9,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AtualizacoesPage implements OnInit {
 
-  constructor() { }
-
-  ngOnInit() {
-  }
+  constructor(private navCtrl: NavController) { }
+    
+    voltar() {
+      this.navCtrl.back();
+    }
+  
+    ngOnInit() {
+    }
 
 }

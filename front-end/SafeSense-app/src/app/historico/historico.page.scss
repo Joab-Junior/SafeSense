@@ -1,0 +1,26 @@
+.rodape {
+    background-color: #f8f8f8;
+    padding: 10px 0;
+  }
+
+  .footer-icons {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+  }
+
+  .icon-button ion-icon {
+    font-size: 24px;
+    color: #333;
+  }
+
+  .icon-button:active ion-icon {
+    color: #007bff; /* cor ao clicar */
+  }
