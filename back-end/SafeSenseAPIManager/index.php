@@ -9,10 +9,10 @@ $dotenv = Dotenv::createImmutable(__DIR__ . '/./');
 $dotenv->load();
 
 // Captura os headers HTTP
-$headers = getAllHeadersPortable();
+$headers = getallheaders();
 
 // Tenta pegar o segredo do header 'X-App-Secret'
-$appSecret = $headers['x-app-secret'] ?? '';
+$appSecret = $headers['X-App-Secret'] ?? '';
 
 // Se não existir no header, tenta pegar do corpo JSON (opcional)
 if (!$appSecret) {
@@ -33,7 +33,7 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 
 switch ($uri) {
-    case 'https://safesense-api-manager-development.up.railway.app/auth/delete-account.php':
+    case '/auth/delete-account.php':
         if ($method === 'DELETE') {
             require __DIR__ . '/auth/delete-account.php';
         } else {
@@ -42,15 +42,15 @@ switch ($uri) {
         }
     break;
 
-    case 'https://safesense-api-manager-development.up.railway.app/auth/login.php':
+    case '/auth/login.php':
         require __DIR__ . '/auth/login.php';
     break;
 
-    case 'https://safesense-api-manager-development.up.railway.app/auth/register.php':
+    case '/auth/register.php':
         require __DIR__ . '/auth/register.php';
     break;
 
-    case 'https://safesense-api-manager-development.up.railway.app/auth/refresh-token.php':
+    case '/auth/refresh-token.php':
         require __DIR__ . '/auth/refresh-token.php';
     break;
 

@@ -25,24 +25,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 header("Content-Type: application/json");
 
-function getAllHeadersPortable(): array {
-    $headers = [];
-
-    foreach ($_SERVER as $name => $value) {
-        if (str_starts_with($name, 'HTTP_')) {
-            $key = strtolower(str_replace('_', '-', substr($name, 5)));
-            $headers[$key] = $value;
-        } elseif ($name === 'CONTENT_TYPE') {
-            $headers['content-type'] = $value;
-        } elseif ($name === 'CONTENT_LENGTH') {
-            $headers['content-length'] = $value;
-        } elseif ($name === 'CONTENT_MD5') {
-            $headers['content-md5'] = $value;
-        } elseif ($name === 'AUTHORIZATION') {
-            $headers['authorization'] = $value;
+// Definição da função, só será criada se não existir nativamente
+if (!function_exists('getallheaders')) {
+    function getallheaders() {
+        $headers = [];
+        foreach ($_SERVER as $name => $value) {
+            if (substr($name, 0, 5) == 'HTTP_') {
+                $key = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
+                $headers[$key] = $value;
+            } elseif (in_array($name, ['CONTENT_TYPE', 'CONTENT_LENGTH', 'CONTENT_MD5'])) {
+                $key = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', $name))));
+                $headers[$key] = $value;
+            }
         }
+        return $headers;
     }
-
-    return $headers;
 }
 ?>

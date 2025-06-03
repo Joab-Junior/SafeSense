@@ -1,7 +1,7 @@
 <?php
     ini_set('display_errors', 0);
     ini_set('log_errors', 1);
-    ini_set('error_log', __DIR__ . '/../logs/php_errors.log');
+    ini_set('error_log', __DIR__ . '/../logs/php_errors.log'); // Não deixe de criar essa pasta e esse arquivo caso não tenha!
     error_reporting(E_ALL);
 
     include_once __DIR__ . '/../config/headers.php';
@@ -15,8 +15,8 @@
     }
 
     // Pega o token do header
-    $headers = getAllHeadersPortable();
-    $authHeader = $headers['authorization'] ?? '';
+    $headers = getallheaders();
+    $authHeader = $headers['Authorization'] ?? '';
 
     if (!preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
         http_response_code(401);

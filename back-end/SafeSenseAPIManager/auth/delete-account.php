@@ -1,7 +1,7 @@
 <?php
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/../logs/php_errors.log');
+ini_set('error_log', __DIR__ . '/../logs/php_errors.log'); // Não deixe de criar essa pasta e esse arquivo caso não tenha!
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/../config/headers.php';
@@ -15,11 +15,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'DELETE') {
     exit;
 }
 
+error_log("Entrou em delete-account.php");
+
 // Lê os headers para pegar o Authorization
-$headers = getAllHeadersPortable();
-$authHeader = $headers['authorization'] ?? '';
+$headers = getallheaders();
+$authHeader = $headers['Authorization'] ?? '';
+
+error_log("Authorization Header: " . $authHeader);
 
 if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
+    error_log("Token não fornecido corretamente");
     jsonResponse('error', 'Token não fornecido.', 401);
     exit;
 }
@@ -29,16 +34,25 @@ $jwt = new JWTHandler();
 $decoded = $jwt->validateToken($token);
 
 if (!$decoded) {
+    error_log("Token inválido");
     jsonResponse('error', 'Token inválido.', 401);
     exit;
 }
 
 $userId = $decoded->user_id;
+error_log("ID do usuário extraído do token: " . $userId);
 
 // Deleta o usuário
 $stmt = $conn->prepare("DELETE FROM usuarios WHERE id_usuario = ?");
 $stmt->bind_param("i", $userId);
-$stmt->execute();
+
+if (!$stmt->execute()) {
+    error_log("Erro ao executar DELETE: " . $stmt->error);
+    jsonResponse('error', 'Erro interno ao deletar usuário.', 500);
+    exit;
+}
+
+error_log("DELETE executado. Linhas afetadas: " . $stmt->affected_rows);
 
 if ($stmt->affected_rows > 0) {
     jsonResponse('success', 'Conta deletada com sucesso.');
