@@ -45,3 +45,4 @@ class JWTHandler {
         return JWT::decode($token, new Key($this->key, 'HS256'));
     }
 }
+?>
