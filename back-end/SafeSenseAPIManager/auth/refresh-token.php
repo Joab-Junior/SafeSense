@@ -8,6 +8,32 @@
     include_once __DIR__ . '/../helper/jwtHandler.php';
     include_once __DIR__ . '/../config/response.php';
 
+    use Dotenv\Dotenv;
+
+    // Carrega variáveis de ambiente
+    $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+    $dotenv->load();
+
+    // Captura os headers HTTP
+    $headers = getallheaders();
+
+    // Tenta pegar o segredo do header 'X-App-Secret'
+    $appSecret = $headers['X-App-Secret'] ?? '';
+
+    // Se não existir no header, tenta pegar do corpo JSON (opcional)
+    if (!$appSecret) {
+        $input = json_decode(file_get_contents('php://input'), true);
+        $appSecret = $input['appSecret'] ?? '';
+    }
+
+    // Compara com o valor correto do .env
+    $envSecret = $_ENV['APP_SECRET'] ?? null;
+
+    // Valida o segredo
+    if (!$envSecret || $appSecret !== $envSecret) {
+        jsonResponse('error', 'Acesso negado: app secret inválido.', 403);
+    }
+
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         http_response_code(405);
         jsonResponse('error', 'Método não permitido. Use POST.');
@@ -15,7 +41,6 @@
     }
 
     // Pega o token do header
-    $headers = getallheaders();
     $authHeader = $headers['Authorization'] ?? '';
 
     if (!preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {

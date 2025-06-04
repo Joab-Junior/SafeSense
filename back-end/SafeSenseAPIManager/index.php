@@ -54,6 +54,10 @@ switch ($uri) {
         require __DIR__ . '/auth/refresh-token.php';
     break;
 
+    case '/auth/profile.php':
+        require __DIR__ . '/auth/profile.php';
+    break;
+
     default:
         http_response_code(404);
         jsonResponse('error', 'Rota não encontrada.');

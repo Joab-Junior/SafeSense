@@ -1,40 +1,70 @@
 <?php
-require_once __DIR__ . '/../config/headers.php';
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../helper/jwtHandler.php';
-require_once __DIR__ . '/../config/response.php';
+    ini_set('display_errors', 0);
+    ini_set('log_errors', 1);
+    ini_set('error_log', __DIR__ . '/../logs/php_errors.log'); // Não deixe de criar essa pasta e esse arquivo caso não tenha!
+    error_reporting(E_ALL);
 
-$headers = getallheaders();
-$authHeader = $headers['Authorization'] ?? '';
+    require_once __DIR__ . '/../config/headers.php';
+    require_once __DIR__ . '/../config/database.php';
+    require_once __DIR__ . '/../helper/jwtHandler.php';
+    require_once __DIR__ . '/../config/response.php';
 
-if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
-    http_response_code(401);
-    jsonResponse('error', 'Token ausente.');
-    exit;
-}
+    use Dotenv\Dotenv;
 
-$token = trim(str_replace('Bearer ', '', $authHeader));
-$jwt = new JWTHandler();
-$payload = $jwt->validateToken($token);
+    // Carrega variáveis de ambiente
+    $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+    $dotenv->load();
 
-if (!$payload) {
-    http_response_code(401);
-    jsonResponse('error', 'Token inválido ou expirado.');
-    exit;
-}
+    // Captura os headers HTTP
+    $headers = getallheaders();
 
-$user_id = $payload->user_id;
+    // Tenta pegar o segredo do header 'X-App-Secret'
+    $appSecret = $headers['X-App-Secret'] ?? '';
 
-$stmt = $conn->prepare("SELECT nm_usuario AS nome, em_usuario AS email FROM usuarios WHERE id_usuario = ?");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
+    // Se não existir no header, tenta pegar do corpo JSON (opcional)
+    if (!$appSecret) {
+        $input = json_decode(file_get_contents('php://input'), true);
+        $appSecret = $input['appSecret'] ?? '';
+    }
 
-if ($user) {
-    jsonResponse('success', 'Dados do perfil carregados com sucesso.', $user);
-} else {
-    http_response_code(404);
-    jsonResponse('error', 'Usuário não encontrado.');
-}
+    // Compara com o valor correto do .env
+    $envSecret = $_ENV['APP_SECRET'] ?? null;
+
+    // Valida o segredo
+    if (!$envSecret || $appSecret !== $envSecret) {
+        jsonResponse('error', 'Acesso negado: app secret inválido.', 403);
+    }
+
+    $authHeader = $headers['Authorization'] ?? '';
+
+    if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
+        http_response_code(401);
+        jsonResponse('error', 'Token ausente.');
+        exit;
+    }
+
+    $token = trim(str_replace('Bearer ', '', $authHeader));
+    $jwt = new JWTHandler();
+    $payload = $jwt->validateToken($token);
+
+    if (!$payload) {
+        http_response_code(401);
+        jsonResponse('error', 'Token inválido ou expirado.');
+        exit;
+    }
+
+    $user_id = $payload->user_id;
+
+    $stmt = $conn->prepare("SELECT nm_usuario AS nome, em_usuario AS email FROM usuarios WHERE id_usuario = ?");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+
+    if ($user) {
+        jsonResponse('success', 'Dados do perfil carregados com sucesso.', $user);
+    } else {
+        http_response_code(404);
+        jsonResponse('error', 'Usuário não encontrado.');
+    }
 ?>

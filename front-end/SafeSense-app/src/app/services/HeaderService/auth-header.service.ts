@@ -9,7 +9,7 @@ export class AuthHeaderService {
 
   constructor() {}
 
-  getHeaders(): { [header: string]: string } {
+  getAppSecret(): { [header: string]: string } {
     return {
       'X-App-Secret': this.APP_SECRET
     };

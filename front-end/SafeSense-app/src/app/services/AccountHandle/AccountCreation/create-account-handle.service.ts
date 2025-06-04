@@ -27,7 +27,7 @@ export class CreateAccountHandleService {
 
   createAccount(data: CreateAccountData): Observable<CreateAccountResponse> {
     return this.http.post<CreateAccountResponse>(`${this.apiUrl}${this.registerEndpoint}`, data, {
-      headers: this.authHeader.getHeaders()
+      headers: this.authHeader.getAppSecret()
     }).pipe(
       catchError(err => {
         console.error('Erro ao criar conta: ', err);

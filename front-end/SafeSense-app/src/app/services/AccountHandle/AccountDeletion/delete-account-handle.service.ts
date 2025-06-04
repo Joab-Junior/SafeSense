@@ -23,7 +23,7 @@ export class DeleteAccountHandleService {
     }
 
     return this.http.delete(`${this.apiUrl}${this.deleteAccountEndpoint}`, {
-      headers: { Authorization: `Bearer ${token}`, ...this.authHeader.getHeaders()}
+      headers: { Authorization: `Bearer ${token}`, ...this.authHeader.getAppSecret()}
     }).pipe(
       catchError(this.errorHandler.handleError)
     );

@@ -1,77 +1,84 @@
 <?php
-ini_set('display_errors', 0);
-ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/../logs/php_errors.log'); // Não deixe de criar essa pasta e esse arquivo caso não tenha!
-error_reporting(E_ALL);
+    ini_set('display_errors', 0);
+    ini_set('log_errors', 1);
+    ini_set('error_log', __DIR__ . '/../logs/php_errors.log'); // Não deixe de criar essa pasta e esse arquivo caso não tenha!
+    error_reporting(E_ALL);
 
-require_once __DIR__ . '/../config/headers.php';
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../helper/jwtHandler.php';
-require_once __DIR__ . '/../config/response.php';
+    require_once __DIR__ . '/../config/headers.php';
+    require_once __DIR__ . '/../config/database.php';
+    require_once __DIR__ . '/../helper/jwtHandler.php';
+    require_once __DIR__ . '/../config/response.php';
 
-// Verifica se o método é DELETE
-if ($_SERVER['REQUEST_METHOD'] !== 'DELETE') {
-    jsonResponse('error', 'Método não permitido.', 405);
-    exit;
-}
+    use Dotenv\Dotenv;
 
-error_log("Entrou em delete-account.php");
+    // Carrega variáveis de ambiente
+    $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+    $dotenv->load();
 
-// Lê os headers para pegar o Authorization
-$headers = getallheaders();
-$authHeader = $headers['Authorization'] ?? '';
+    // Captura os headers HTTP
+    $headers = getallheaders();
 
-error_log("Authorization Header: " . $authHeader);
+    // Tenta pegar o segredo do header 'X-App-Secret'
+    $appSecret = $headers['X-App-Secret'] ?? '';
 
-if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
-    error_log("Token não fornecido corretamente");
-    jsonResponse('error', 'Token não fornecido.', 401);
-    exit;
-}
+    // Se não existir no header, tenta pegar do corpo JSON (opcional)
+    if (!$appSecret) {
+        $input = json_decode(file_get_contents('php://input'), true);
+        $appSecret = $input['appSecret'] ?? '';
+    }
 
-$token = trim(str_replace('Bearer', '', $authHeader));
-$jwt = new JWTHandler();
-$decoded = $jwt->validateToken($token);
+    // Compara com o valor correto do .env
+    $envSecret = $_ENV['APP_SECRET'] ?? null;
 
-if (!$decoded) {
-    error_log("Token inválido");
-    jsonResponse('error', 'Token inválido.', 401);
-    exit;
-}
+    // Valida o segredo
+    if (!$envSecret || $appSecret !== $envSecret) {
+        jsonResponse('error', 'Acesso negado: app secret inválido.', 403);
+    }
 
-$userId = $decoded->user_id;
-error_log("ID do usuário extraído do token: " . $userId);
+    // Verifica se o método é DELETE
+    if ($_SERVER['REQUEST_METHOD'] !== 'DELETE') {
+        jsonResponse('error', 'Método não permitido.', 405);
+        exit;
+    }
 
-// Deleta o usuário
-$stmt = $conn->prepare("DELETE FROM usuarios WHERE id_usuario = ?");
-$stmt->bind_param("i", $userId);
+    $authHeader = $headers['Authorization'] ?? '';
 
-if (!$stmt->execute()) {
-    error_log("Erro ao executar DELETE: " . $stmt->error);
-    jsonResponse('error', 'Erro interno ao deletar usuário.', 500);
-    exit;
-}
+    if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
+        error_log("Token não fornecido corretamente");
+        jsonResponse('error', 'Token não fornecido.', 401);
+        exit;
+    }
 
-error_log("DELETE executado. Linhas afetadas: " . $stmt->affected_rows);
+    $token = trim(str_replace('Bearer', '', $authHeader));
+    $jwt = new JWTHandler();
+    $decoded = $jwt->validateToken($token);
 
-if ($stmt->affected_rows > 0) {
-    jsonResponse('success', 'Conta deletada com sucesso.');
-    exit;
-} else {
-    jsonResponse('error', 'Usuário não encontrado ou já deletado.', 404);
-    exit;
-}
+    if (!$decoded) {
+        error_log("Token inválido");
+        jsonResponse('error', 'Token inválido.', 401);
+        exit;
+    }
 
-/* $stmt = $conn->prepare("SELECT * FROM usuarios WHERE id_usuario = ?");
-$stmt->bind_param("i", $userId);
-$stmt->execute();
-$result = $stmt->get_result();
+    $userId = $decoded->user_id;
+    error_log("ID do usuário extraído do token: " . $userId);
 
-if ($result->num_rows > 0) {
-    $userData = $result->fetch_assoc();
-    jsonResponse('success', 'Dados do usuário antes da exclusão:', $userData);
-} else {
-    jsonResponse('error', 'Usuário não encontrado.', 404);
-    exit;
-} */
+    // Deleta o usuário
+    $stmt = $conn->prepare("DELETE FROM usuarios WHERE id_usuario = ?");
+    $stmt->bind_param("i", $userId);
+
+    if (!$stmt->execute()) {
+        error_log("Erro ao executar DELETE: " . $stmt->error);
+        jsonResponse('error', 'Erro interno ao deletar usuário.', 500);
+        exit;
+    }
+
+    error_log("DELETE executado. Linhas afetadas: " . $stmt->affected_rows);
+
+    if ($stmt->affected_rows > 0) {
+        jsonResponse('success', 'Conta deletada com sucesso.');
+        exit;
+    } else {
+        jsonResponse('error', 'Usuário não encontrado ou já deletado.', 404);
+        exit;
+    }
 ?>

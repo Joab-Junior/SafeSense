@@ -43,7 +43,7 @@ export class AccountAuthHandleService {
   // LOGIN
   login(data: AuthAccountData): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}${this.loginEndpoint}`, data, {
-      headers: this.authHeader.getHeaders()
+      headers: this.authHeader.getAppSecret()
     }).pipe(
       tap(res => {
         if (res.status === 'success' && res.data) {
@@ -172,7 +172,7 @@ export class AccountAuthHandleService {
     this.isRefreshing = true;
 
     return this.http.post<{ status: string, token?: string }>(`${this.apiUrl}${this.refreshTokenEndpoint}`, {}, {
-      headers: { Authorization: `Bearer ${token}`, ...this.authHeader.getHeaders() }
+      headers: { Authorization: `Bearer ${token}`, ...this.authHeader.getAppSecret() }
     }).pipe(
       tap(res => {
         if (res.status === 'success' && res.token) {

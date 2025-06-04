@@ -1,0 +1,68 @@
+Guia Completo: Publicando e Recuperando um Projeto Ionic no GitHub
+
+✨ Objetivo
+
+Este guia explica o que acontece quando você publica um projeto Ionic no GitHub, o que não é enviado por padrão, e como restaurar corretamente o projeto para que funcione em outra máquina ou repositório.
+
+📂 Estrutura Básica de um Projeto Ionic
+
+Um projeto Ionic normalmente tem essa estrutura:
+
+meu-projeto/
+├── node_modules/       <- NÃO vai para o GitHub
+├── src/                <- Vai para o GitHub
+├── www/                <- Pode ser ignorada (gerada em build)
+├── package.json        <- Vai para o GitHub
+├── angular.json        <- Vai para o GitHub
+├── tsconfig.json       <- Vai para o GitHub
+├── .gitignore          <- Vai para o GitHub
+
+🔎 O que NÃO vai para o GitHub (por padrão)
+
+node_modules/: pasta com todas as dependências instaladas (cerca de centenas de MB).
+
+www/: arquivos gerados após o build.
+
+environment.local.ts ou credenciais secretas, se adicionadas ao .gitignore.
+
+⚠️ Problemas ao Clonar do GitHub
+
+Ao clonar o projeto, ele virá sem as dependências. Por isso, você precisa instalar as dependências novamente.
+
+Passo a passo:
+
+Clone o projeto:
+
+git clone https://github.com/seu-usuario/seu-projeto.git
+
+Acesse a pasta:
+
+cd seu-projeto
+
+Instale as dependências:
+
+npm install
+
+Rode o projeto:
+
+ionic serve
+
+✅ Como garantir que tudo funcione
+
+Certifique-se de que package.json e angular.json estão no repositório.
+
+Use o comando npm install após o clone para restaurar node_modules.
+
+Se você usou variáveis de ambiente (ex: .env), inclua um .env.example para orientar quem baixar o projeto.
+
+🔐 Dica de Segurança
+
+Nunca envie credenciais, senhas, chaves JWT ou .env reais para o repositório GitHub. Use o .gitignore corretamente para protegê-los.
+
+🚀 Checklist final para subir seu projeto:
+
+
+
+🎓 Conclusão
+
+Com essas instruções, você pode publicar com segurança seu projeto Ionic no GitHub e garantir que qualquer pessoa (ou você mesmo em outro computador) consiga restaurar e rodar o projeto sem problemas.

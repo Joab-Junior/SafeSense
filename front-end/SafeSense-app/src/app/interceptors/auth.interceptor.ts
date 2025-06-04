@@ -10,12 +10,14 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { AccountAuthHandleService } from '../services/AccountHandle/AccounAuth/account-auth-handle.service';
 import { Router } from '@angular/router';
+import { AuthHeaderService } from '../services/HeaderService/auth-header.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
   constructor(
     private authService: AccountAuthHandleService,
+    private authHeader: AuthHeaderService,
     private router: Router
   ) { }
 
@@ -24,38 +26,37 @@ export class AuthInterceptor implements HttpInterceptor {
       return next.handle(req);
     }
 
-    // Token atual
     const token = this.authService.getToken();
+    const appSecretHeader = this.authHeader.getAppSecret();
 
-    // Clona a requisição com o token (se houver)
-    let authReq = req;
+    let headers: { [key: string]: string } = { ...appSecretHeader };
+
     if (token) {
-      authReq = req.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      headers['Authorization'] = `Bearer ${token}`;
     }
 
-    // Envia a requisição normalmente
-    return next.handle(authReq).pipe(
+    const clonedReq = req.clone({
+      setHeaders: headers
+    });
+
+    return next.handle(clonedReq).pipe(
       catchError(error => {
-        // Se for 401 (não autorizado)
         if (error instanceof HttpErrorResponse && error.status === 401) {
-          // Se o token está expirado ou prestes a expirar, tenta renovar
           if (this.authService.isTokenExpired() || this.authService.isTokenExpiringSoon()) {
             return this.authService.refreshToken().pipe(
               switchMap(newToken => {
-                // Reenvia a mesma requisição com o novo token
-                const clonedReq = req.clone({
-                  setHeaders: {
-                    Authorization: `Bearer ${newToken}`
-                  }
+                const retryHeaders = {
+                  ...appSecretHeader,
+                  Authorization: `Bearer ${newToken}`
+                };
+
+                const retriedReq = req.clone({
+                  setHeaders: retryHeaders
                 });
-                return next.handle(clonedReq);
+
+                return next.handle(retriedReq);
               }),
               catchError(() => {
-                // Falhou o refresh → faz logout
                 this.authService.logout();
                 this.router.navigate(['/entrar']);
                 return throwError(() => new Error('Sessão expirada.'));
@@ -64,7 +65,7 @@ export class AuthInterceptor implements HttpInterceptor {
           }
         }
 
-        return throwError(() => error); // Outro erro qualquer
+        return throwError(() => error);
       })
     );
   }
