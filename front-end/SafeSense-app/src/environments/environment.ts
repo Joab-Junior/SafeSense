@@ -4,9 +4,9 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://safesense-api-manager-development.up.railway.app/auth'
-  // https://safesense-api-manager-development.up.railway.app/auth // Para rodar na net
-  // http://localhost/SafeSenseAPIManager/auth // Para rodar localmente
+  apiUrl: 'https://safesense-api-manager-development.up.railway.app'
+  // https://safesense-api-manager-development.up.railway.app // Para rodar na net
+  // http://localhost/SafeSenseAPIManager // Para rodar localmente
 };
 
 /*

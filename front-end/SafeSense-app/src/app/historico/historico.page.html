@@ -4,22 +4,38 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding ion-text-center">
-  <ion-icon name="flame-outline" size="large" color="danger"></ion-icon>
-  <h2>Nenhum histórico encontrado</h2>
-  <p>Até o momento, não há registros de vazamentos de gás neste aplicativo.</p>
+<ion-content class="ion-padding">
+
+  <!-- Se não tem alertas, mostra mensagem -->
+  <div *ngIf="alertas.length === 0" class="ion-text-center">
+    <ion-icon name="flame-outline" size="large" color="danger"></ion-icon>
+    <h2>Nenhum histórico encontrado</h2>
+    <p>Até o momento, não há registros de vazamentos de gás neste aplicativo.</p>
+  </div>
+
+  <!-- Se tem alertas, mostra lista -->
+  <ion-list *ngIf="alertas.length > 0">
+    <ion-item *ngFor="let alerta of alertas">
+      <ion-label>
+        <h3>Nível de Gás: {{ alerta.nivel_gas }}</h3>
+        <p>Status: {{ alerta.st_alerta }}</p>
+        <p>Data: {{ alerta.dt_alerta | date:'dd/MM/yyyy HH:mm:ss' }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
 </ion-content>
 
 <ion-footer class="rodape">
-    <div class="footer-icons">
-      <ion-button class="icon-button" fill="clear" (click)="voltar()">
-        <ion-icon name="caret-back-outline"></ion-icon>
-      </ion-button>
-      <ion-button class="icon-button" fill="clear" routerLink="/inicio">
-        <ion-icon name="home-outline"></ion-icon>
-      </ion-button>
-      <ion-button class="icon-button" fill="clear" routerLink="/configuracoes">
-        <ion-icon name="settings-outline"></ion-icon>
-      </ion-button>
-    </div>
-  </ion-footer>
+  <div class="footer-icons">
+    <ion-button class="icon-button" fill="clear" (click)="goBack()">
+      <ion-icon name="caret-back-outline"></ion-icon>
+    </ion-button>
+    <ion-button class="icon-button" fill="clear" routerLink="/inicio">
+      <ion-icon name="home-outline"></ion-icon>
+    </ion-button>
+    <ion-button class="icon-button" fill="clear" routerLink="/configuracoes">
+      <ion-icon name="settings-outline"></ion-icon>
+    </ion-button>
+  </div>
+</ion-footer>

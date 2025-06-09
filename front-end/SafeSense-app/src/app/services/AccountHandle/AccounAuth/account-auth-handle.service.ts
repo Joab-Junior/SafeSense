@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { Observable, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { jwtDecode } from 'jwt-decode';
 import { map } from 'rxjs/operators';
@@ -30,13 +30,19 @@ interface JwtPayload {
 export class AccountAuthHandleService {
 
   private apiUrl = environment.apiUrl;
-  private loginEndpoint = '/login.php';
-  private refreshTokenEndpoint = '/refresh-token.php';
+  private loginEndpoint = '/auth/login.php';
+  private refreshTokenEndpoint = '/auth/refresh-token.php';
   private tokenKey = 'jwtToken';
   private refreshTokenTimeoutId?: any;
   private logoutTimeout: any = null;
   private isRefreshing = false;
   private refreshSubscribers: ((token: string) => void)[] = [];
+
+  private loggedInSubject = new BehaviorSubject<boolean>(this.isAuthenticated());
+
+  get isLoggedIn$(): Observable<boolean> {
+    return this.loggedInSubject.asObservable();
+  }
 
   constructor(private http: HttpClient, private errorHandler: ErrorHandlerService, private authHeader: AuthHeaderService) { }
 
@@ -50,6 +56,7 @@ export class AccountAuthHandleService {
           localStorage.setItem(this.tokenKey, res.data);
           this.scheduleRefreshToken();
           this.scheduleAutoLogout(res.data);
+          this.loggedInSubject.next(true);
         }
       }),
       catchError(this.errorHandler.handleError)
@@ -59,6 +66,7 @@ export class AccountAuthHandleService {
   // LOGOUT
   logout(): void {
     localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem('last_alert_id');
 
     if (this.refreshTokenTimeoutId) {
       clearTimeout(this.refreshTokenTimeoutId);
@@ -69,6 +77,8 @@ export class AccountAuthHandleService {
       clearTimeout(this.logoutTimeout);
       this.logoutTimeout = null;
     }
+
+    this.loggedInSubject.next(false);
   }
 
   private scheduleAutoLogout(token: string): void {
@@ -95,6 +105,19 @@ export class AccountAuthHandleService {
   getToken(): string | null {
     return localStorage.getItem(this.tokenKey);
   }
+
+  getUserId(): number | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    try {
+      const decoded = jwtDecode<any>(token);
+      return decoded.user_id || null;
+    } catch {
+      return null;
+    }
+  }
+
 
   // VERIFICAR AUTENTICAÇÃO
   isAuthenticated(): boolean {

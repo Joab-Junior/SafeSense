@@ -14,7 +14,7 @@ $headers = getallheaders();
 // Tenta pegar o segredo do header 'X-App-Secret'
 $appSecret = $headers['X-App-Secret'] ?? '';
 
-// Se não existir no header, tenta pegar do corpo JSON (opcional)
+// Se não existir no header, tenta pegar do corpo JSON
 if (!$appSecret) {
     $input = json_decode(file_get_contents('php://input'), true);
     $appSecret = $input['appSecret'] ?? '';
@@ -56,6 +56,18 @@ switch ($uri) {
 
     case '/auth/profile.php':
         require __DIR__ . '/auth/profile.php';
+    break;
+
+    case '/device/register-alert.php':
+        require __DIR__ . '/device/register-alert.php';
+    break;
+
+    case '/device/last-alert.php':
+        require __DIR__ . '/device/last-alert.php';
+    break;
+
+    case '/device/list-alerts.php':
+        require __DIR__ . '/device/list-alerts.php';
     break;
 
     default:

@@ -1,7 +1,7 @@
 <?php
     ini_set('display_errors', 0);
     ini_set('log_errors', 1);
-    ini_set('error_log', __DIR__ . '/../logs/php_errors.log'); // Não deixe de criar essa pasta e esse arquivo caso não tenha!
+    ini_set('error_log', __DIR__ . '/../logs/php_errors.log'); // Não deixe de criar essa pasta e esse arquivo caso esteja rodando localmente e não tenha a pasta ainda!
     error_reporting(E_ALL);
 
     include_once __DIR__ . '/../config/headers.php';
@@ -14,13 +14,19 @@
     $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
     $dotenv->load();
 
+    if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+        http_response_code(405);
+        jsonResponse("error", "Método não permitido");
+        exit;
+    }
+
     // Captura os headers HTTP
     $headers = getallheaders();
 
     // Tenta pegar o segredo do header 'X-App-Secret'
     $appSecret = $headers['X-App-Secret'] ?? '';
 
-    // Se não existir no header, tenta pegar do corpo JSON (opcional)
+    // Se não existir no header, tenta pegar do corpo JSON
     if (!$appSecret) {
         $input = json_decode(file_get_contents('php://input'), true);
         $appSecret = $input['appSecret'] ?? '';
@@ -31,7 +37,9 @@
 
     // Valida o segredo
     if (!$envSecret || $appSecret !== $envSecret) {
-        jsonResponse('error', 'Acesso negado: app secret inválido.', 403);
+        http_response_code(403);
+        jsonResponse('error', 'Acesso negado: app secret inválido.');
+        exit;
     }
 
     // Lê o JSON
@@ -39,12 +47,6 @@
 
     function validateStrongPassword($password) {
         return preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/', $password);
-    }
-
-    if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-        http_response_code(405);
-        jsonResponse("error", "Método não permitido");
-        exit;
     }
 
     $name = trim($input["name"] ?? '');

@@ -21,7 +21,7 @@ export interface CreateAccountResponse {
 export class CreateAccountHandleService {
 
   private apiUrl = environment.apiUrl;
-  private registerEndpoint = '/register.php';
+  private registerEndpoint = '/auth/register.php';
 
   constructor(private http: HttpClient, private authHeader: AuthHeaderService) { }
 

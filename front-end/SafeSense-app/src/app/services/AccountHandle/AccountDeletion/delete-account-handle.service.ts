@@ -12,7 +12,7 @@ import { AuthHeaderService } from '../../HeaderService/auth-header.service';
 export class DeleteAccountHandleService {
 
   private apiUrl = environment.apiUrl;
-  private deleteAccountEndpoint = '/delete-account.php';
+  private deleteAccountEndpoint = '/auth/delete-account.php';
 
   constructor(private authService: AccountAuthHandleService, private http: HttpClient, private errorHandler: ErrorHandlerService, private authHeader: AuthHeaderService) { }
 

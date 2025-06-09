@@ -1,7 +1,7 @@
 <?php
     ini_set('display_errors', 0);
     ini_set('log_errors', 1);
-    ini_set('error_log', __DIR__ . '/../logs/php_errors.log'); // Não deixe de criar essa pasta e esse arquivo caso não tenha!
+    ini_set('error_log', __DIR__ . '/../logs/php_errors.log'); // Não deixe de criar essa pasta e esse arquivo caso esteja rodando localmente e não tenha a pasta ainda!
     error_reporting(E_ALL);
 
     require_once __DIR__ . '/../config/headers.php';
@@ -15,13 +15,20 @@
     $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
     $dotenv->load();
 
+    // Verifica se o método é DELETE
+    if ($_SERVER['REQUEST_METHOD'] !== 'DELETE') {
+        http_response_code(405);
+        jsonResponse('error', 'Método não permitido.');
+        exit;
+    }
+
     // Captura os headers HTTP
     $headers = getallheaders();
 
     // Tenta pegar o segredo do header 'X-App-Secret'
     $appSecret = $headers['X-App-Secret'] ?? '';
 
-    // Se não existir no header, tenta pegar do corpo JSON (opcional)
+    // Se não existir no header, tenta pegar do corpo JSON
     if (!$appSecret) {
         $input = json_decode(file_get_contents('php://input'), true);
         $appSecret = $input['appSecret'] ?? '';
@@ -32,20 +39,16 @@
 
     // Valida o segredo
     if (!$envSecret || $appSecret !== $envSecret) {
-        jsonResponse('error', 'Acesso negado: app secret inválido.', 403);
-    }
-
-    // Verifica se o método é DELETE
-    if ($_SERVER['REQUEST_METHOD'] !== 'DELETE') {
-        jsonResponse('error', 'Método não permitido.', 405);
+        http_response_code(403);
+        jsonResponse('error', 'Acesso negado: app secret inválido.');
         exit;
     }
 
     $authHeader = $headers['Authorization'] ?? '';
 
     if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
-        error_log("Token não fornecido corretamente");
-        jsonResponse('error', 'Token não fornecido.', 401);
+        http_response_code(401);
+        jsonResponse('error', 'Token não fornecido.');
         exit;
     }
 
@@ -54,21 +57,20 @@
     $decoded = $jwt->validateToken($token);
 
     if (!$decoded) {
-        error_log("Token inválido");
-        jsonResponse('error', 'Token inválido.', 401);
+        http_response_code(401);
+        jsonResponse('error', 'Token inválido.');
         exit;
     }
 
     $userId = $decoded->user_id;
-    error_log("ID do usuário extraído do token: " . $userId);
 
     // Deleta o usuário
     $stmt = $conn->prepare("DELETE FROM usuarios WHERE id_usuario = ?");
     $stmt->bind_param("i", $userId);
 
     if (!$stmt->execute()) {
-        error_log("Erro ao executar DELETE: " . $stmt->error);
-        jsonResponse('error', 'Erro interno ao deletar usuário.', 500);
+        http_response_code(500);
+        jsonResponse('error', 'Erro interno ao deletar usuário.');
         exit;
     }
 
@@ -78,7 +80,8 @@
         jsonResponse('success', 'Conta deletada com sucesso.');
         exit;
     } else {
-        jsonResponse('error', 'Usuário não encontrado ou já deletado.', 404);
+        http_response_code(404);
+        jsonResponse('error', 'Usuário não encontrado ou já deletado.');
         exit;
     }
 ?>

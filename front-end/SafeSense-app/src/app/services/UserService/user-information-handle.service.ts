@@ -21,7 +21,7 @@ export interface ProfileResponse {
 export class UserInformationHandleService {
 
   private apiUrl = environment.apiUrl;
-  private profileEndpoint = '/profile.php';
+  private profileEndpoint = '/auth/profile.php';
 
   constructor(private http: HttpClient, private authService: AccountAuthHandleService, private errorHandler: ErrorHandlerService, private authHeader: AuthHeaderService) { }
 
