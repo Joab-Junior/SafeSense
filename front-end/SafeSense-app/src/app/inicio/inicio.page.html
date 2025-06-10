@@ -6,19 +6,17 @@
   </ion-header>
   <ion-content class="ion-padding">
     <div class="menu">
-    <ion-button expand="block" fill="outline" routerLink="/perfil">Perfil</ion-button>
-    <br>
-    <ion-button expand="block" fill="outline" routerLink="/historico">Histórico</ion-button>
-    <br>
-    <ion-button expand="block" fill="outline" routerLink="/relatorio">Relatório</ion-button>
-    <br>
-    <ion-button expand="block" fill="outline" routerLink="/chatbox">Chatbox</ion-button>
-    <br>
-    <ion-button expand="block" fill="outline" routerLink="/atualizacoes">Atualizações</ion-button>
+      <ion-button expand="block" fill="outline" routerLink="/perfil">Perfil</ion-button>
+      <br>
+      <ion-button expand="block" fill="outline" routerLink="/historico">Histórico</ion-button>
+      <br>
+      <ion-button expand="block" fill="outline" routerLink="/chatbox">Chatbox</ion-button>
+      <br>
+      <ion-button expand="block" fill="outline" routerLink="/atualizacoes">Atualizações</ion-button>
     </div>
   </ion-content>
   <ion-footer>
-    <p>safesensegmailcom</p>
+    <p>safe.sense&#64;gmail.com</p>
   </ion-footer>
 </ion-menu>
 <div class="ion-page" id="main-content">
@@ -30,20 +28,55 @@
       <ion-title>SafeSense</ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-content class="ion-padding center-image">
-    <img src="assets/img/Logo.png" alt="Logo" />
+
+  <ion-content class="ion-padding">
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+      <ion-refresher-content pullingText="Puxe para atualizar" refreshingSpinner="circles"
+        refreshingText="Atualizando...">
+      </ion-refresher-content>
+    </ion-refresher>
+
+    <!-- <ion-card class="card-section">
+      <ion-card-header class="card-header">
+        <ion-card-title class="card-title">Notificações</ion-card-title>
+      </ion-card-header>
+      <ion-card-content class="card-content">
+        Não há notificações no momento.
+      </ion-card-content>
+      <ion-item lines="none" class="card-footer">
+        <a routerLink="/notificacoes" class="card-link">Ler mais...</a>
+      </ion-item>
+    </ion-card> -->
+
+    <br>
+
+    <ion-card class="card-section">
+      <ion-card-header class="card-header">
+        <ion-card-title class="card-title">Histórico</ion-card-title>
+      </ion-card-header>
+      <ion-card-content class="card-content">
+        <p *ngIf="alerts.length === 0">Não há históricos no momento.</p>
+
+        <ion-list *ngIf="alerts.length > 0">
+          <ion-item *ngFor="let alert of alerts">
+            <ion-label>
+              <h3>Nível de Gás: {{ alert.nivel_gas }}</h3>
+              <p>Status: {{ alert.st_alerta }}</p>
+              <p>Data: {{ alert.dt_alerta | date:'dd/MM/yyyy HH:mm:ss' }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+      <ion-item lines="none" class="card-footer">
+        <a routerLink="/historico" class="card-link">Ler mais...</a>
+      </ion-item>
+    </ion-card>
   </ion-content>
-  <ion-footer class="rodape">
-    <div class="footer-icons">
-      <ion-button class="icon-button" fill="clear" (click)="goBack()">
-        <ion-icon name="caret-back-outline"></ion-icon>
-      </ion-button>
-      <ion-button class="icon-button" fill="clear" routerLink="/inicio">
-        <ion-icon name="home-outline"></ion-icon>
-      </ion-button>
-      <ion-button class="icon-button" fill="clear" routerLink="/configuracoes">
-        <ion-icon name="settings-outline"></ion-icon>
-      </ion-button>
-    </div>
-  </ion-footer>
+
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="library" routerLink="/configuracoes">
+      <ion-icon name="settings-outline"></ion-icon>
+      Configurações
+    </ion-tab-button>
+  </ion-tab-bar>
 </div>

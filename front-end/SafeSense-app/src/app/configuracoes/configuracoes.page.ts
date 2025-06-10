@@ -10,41 +10,9 @@ import { AccountAuthHandleService } from '../services/AccountHandle/AccounAuth/a
 })
 export class ConfiguracoesPage implements OnInit {
   darkMode = false;
-  isModalOpen = false;
 
-  setOpen(isOpen: boolean) {
-    this.isModalOpen = isOpen;
-  }
   constructor(private alertCtrl: AlertController, private navCtrl: NavController, private authService: AccountAuthHandleService) { }
 
-  // voltar() {
-  //   this.navCtrl.back();
-  // }
-
-  abrirPerfil() {
-    console.log('Ir para conta');
-    // this.navCtrl.navigateForward('/perfil');
-  }
-
-  abrirTemas() {
-    console.log('Ir para temas');
-  }
-
-  abrirNotificacoes() {
-    console.log('Ir para notificações');
-  }
-
-  abrirIdioma() {
-    console.log('Ir para idiomas');
-  }
-
-  abrirPrivacidade() {
-    console.log('Ir para privacidade e segurança');
-  }
-
-  abrirSobre() {
-    console.log('Ir para sobre o app');
-  }
 
   async logout() {
     const alert = await this.alertCtrl.create({
@@ -70,6 +38,18 @@ export class ConfiguracoesPage implements OnInit {
   goBackToHome() {
     // Redireciona para a tela principal
     this.navCtrl.navigateRoot('/home');
+  }
+
+  async aboutApp() {
+    const alert = await this.alertCtrl.create({
+      header: 'Sobre o App',
+      message: 'Este aplicativo foi desenvolvido para funcionar em conjunto com um sistema de detecção de gás baseado em Arduino. Ele tem como principal objetivo monitorar ambientes residenciais, comerciais ou industriais em tempo real e alertar o usuário imediatamente em caso de vazamento de gás inflamável ou tóxico.',
+      buttons: [
+        { text: 'OK', role: 'cancel' }
+      ],
+    });
+
+    await alert.present();
   }
 
   ngOnInit() {

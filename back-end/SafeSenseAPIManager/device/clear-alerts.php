@@ -14,9 +14,10 @@
     $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
     $dotenv->load();
 
-    if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    // Verifica se o método é POST
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         http_response_code(405);
-        jsonResponse("error", "Método não permitido");
+        jsonResponse('error', 'Método não permitido');
         exit;
     }
 
@@ -45,29 +46,19 @@
     $input = json_decode(file_get_contents('php://input'), true);
     $id_usuario = $input['id_usuario'] ?? null;
 
-    if (!is_numeric($id_usuario)) {
-        http_response_code(400);
-        jsonResponse('error', 'ID do usuário é obrigatório e deve ser numérico');
+    if (!$id_usuario) {
+        jsonResponse('error', 'ID do usuário não fornecido');
         exit;
     }
 
-    $stmt = $conn->prepare("SELECT id_alerta, dt_alerta, nivel_gas, st_alerta FROM alertas_gas WHERE id_usuario = ? ORDER BY dt_alerta DESC");
-
-    if (!$stmt) {
-        http_response_code(500);
-        jsonResponse('error', 'Erro ao preparar a consulta');
-        exit;
-    }
-
+    $stmt = $conn->prepare("DELETE FROM alertas_gas WHERE id_usuario = ?");
     $stmt->bind_param('i', $id_usuario);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $rows = $result->fetch_all(MYSQLI_ASSOC);
-
-    if ($rows && count($rows) > 0) {
-        jsonResponse('success', 'Alertas encontrados', $rows);
+    
+    if ($stmt->execute()) {
+        jsonResponse('success', 'Alertas apagados com sucesso!');
     } else {
-        jsonResponse('success', 'Nenhum alerta encontrado', []);
+        jsonResponse('error', 'Erro ao apagar alertas');
     }
-    exit;
+    $stmt->close();
+    $conn->close();
 ?>

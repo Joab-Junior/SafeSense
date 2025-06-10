@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController, ToastController,  Platform, NavController,} from '@ionic/angular';
+import { AlertController, ToastController, Platform, NavController, } from '@ionic/angular';
 import { FingerprintAIO } from '@awesome-cordova-plugins/fingerprint-aio/ngx';
 import { Router } from '@angular/router';
 import { DeleteAccountHandleService } from '../services/AccountHandle/AccountDeletion/delete-account-handle.service';
 import { AccountAuthHandleService } from '../services/AccountHandle/AccounAuth/account-auth-handle.service';
+import { LocalNotifications } from '@capacitor/local-notifications';
+import { ChangePasswordHandlerService } from '../services/AccountHandle/AccountPasswordChange/change-password-handler.service';
 
 @Component({
   selector: 'app-seguranca',
@@ -14,8 +16,9 @@ import { AccountAuthHandleService } from '../services/AccountHandle/AccounAuth/a
 })
 export class SegurancaPage implements OnInit {
 
-  locationEnabled = true;
-  notificationsEnabled = true;
+  locationEnabled = false;
+  notificationsEnabled = false;
+  canToggle = true;
   biometricEnabled = false;
 
   constructor(
@@ -23,12 +26,16 @@ export class SegurancaPage implements OnInit {
     private toastCtrl: ToastController,
     private platform: Platform,
     private faio: FingerprintAIO,
-    private alertController: AlertController,
     private navCtrl: NavController,
     private router: Router,
     private deleteAccountHandler: DeleteAccountHandleService,
-    private authService: AccountAuthHandleService
-  ) {}
+    private authService: AccountAuthHandleService,
+    private changePasswordService: ChangePasswordHandlerService
+  ) { }
+
+  ngOnInit() {
+    this.checkNotificationPermission();
+  }
 
   async changePassword() {
     const alert = await this.alertCtrl.create({
@@ -41,23 +48,73 @@ export class SegurancaPage implements OnInit {
         { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Salvar',
-          handler: data => {
-            const storedPassword = localStorage.getItem('password');
-            if (data.current === storedPassword) {
-              localStorage.setItem('password', data.new);
-              this.presentToast('Senha alterada com sucesso');
-            } else {
-              this.presentToast('Senha atual incorreta');
-            }
+          handler: async (data) => {
+            const loading = await this.toastCtrl.create({
+              message: 'Processando...',
+              duration: 1000,
+              position: 'bottom'
+            });
+            await loading.present();
+
+            this.changePasswordService
+              .changePassword(data.current, data.new)
+              .subscribe({
+                next: async (res) => {
+                  await loading.dismiss();
+                  this.presentToast(res.message, 'success');
+                },
+                error: async (err) => {
+                  await loading.dismiss();
+                  const msg = err?.error?.message || 'Erro ao alterar senha.';
+                  this.presentToast(msg, 'danger');
+                },
+              });
           },
         },
       ],
     });
+
     await alert.present();
   }
 
+
+  async checkNotificationPermission() {
+    const result = await LocalNotifications.checkPermissions();
+    this.notificationsEnabled = result.display === 'granted';
+
+    if (this.notificationsEnabled) {
+      this.canToggle = false;
+    } else {
+      this.canToggle = true;
+    }
+  }
+
+  async handleNotificationToggle() {
+    this.canToggle = false;
+
+    const result = await LocalNotifications.requestPermissions();
+    if (result.display === 'granted') {
+      this.notificationsEnabled = true;
+
+      await LocalNotifications.schedule({
+        notifications: [
+          {
+            id: 1,
+            title: 'Notificações Ativadas',
+            body: 'Você receberá alertas importantes!',
+            schedule: { at: new Date(new Date().getTime() + 1000) }
+          }
+        ]
+      });
+    } else {
+      this.notificationsEnabled = false;
+      this.canToggle = true;
+      console.warn('Usuário negou permissão');
+    }
+  }
+
   async VPP() {
-    const alert = await this.alertController.create({
+    const alert = await this.alertCtrl.create({
       header: 'Política de Privacidade',
       subHeader: 'Última atualização: [25/05/2025]',
       message: 'Este aplicativo ("Aplicativo") foi desenvolvido com o objetivo de alertar usuários sobre possíveis vazamentos de gás. A sua privacidade é importante para nós. Esta Política de Privacidade descreve como suas informações são coletadas, usadas e protegidas.',
@@ -65,30 +122,6 @@ export class SegurancaPage implements OnInit {
     });
 
     await alert.present();
-  }
-
-  
-
-  exportData() {
-    const userData = {
-      nome: 'Usuário Exemplo',
-      email: 'usuario@email.com',
-      configuracoes: {
-        localizacao: this.locationEnabled,
-        notificacoes: this.notificationsEnabled,
-        biometria: this.biometricEnabled,
-      },
-    };
-
-    const blob = new Blob([JSON.stringify(userData, null, 2)], { type: 'application/json' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'meus-dados.json';
-    a.click();
-    window.URL.revokeObjectURL(url);
-
-    this.presentToast('Dados exportados');
   }
 
   async confirmExclution() {
@@ -136,16 +169,13 @@ export class SegurancaPage implements OnInit {
     });
   }
 
-  private async presentToast(message: string) {
+  private async presentToast(message: string, color: 'success' | 'danger') {
     const toast = await this.toastCtrl.create({
       message,
       duration: 2000,
       position: 'bottom',
+      color: color,
     });
     toast.present();
-  }
-
-  ngOnInit(): void {
-    
   }
 }

@@ -11,33 +11,41 @@ import { IonicModule } from '@ionic/angular';
 
 
 export class ChatPage {
-  mensagens: { texto: string; autor: 'eu' | 'bot' }[] = [];
-  novaMensagem = '';
 
-  respostasProntas: string[] = [
-    'Qual é o problema?',
-    'Tem vazamento de gás?',
-    'Preciso de ajuda urgente!',
-    'Local já evacuado.',
-    'Contato feito com suporte.'
+  respostasProntas = [
+    {
+      pergunta: 'Como saberei se há um vazamento de gás na minha casa?',
+      resposta: '',
+      expandido: false,
+    },
+    {
+      pergunta: 'O que devo fazer ao suspeitar de um vazamento de gás?',
+      resposta: 'Abra portas e janelas imediatamente; Não acenda luzes, faíscas ou chamas; Feche o registro de gás, se possível; Saia do local e ligue para a emergência ou empresa responsável pelo fornecimento de gás.',
+      expandido: false
+    },
+    {
+      pergunta: 'O site envia alertas em tempo real?',
+      resposta: 'Sim, se você tiver um sensor de gás conectado ao nosso sistema, os alertas são enviados em tempo real por notificações no aplicativo.',
+      expandido: false
+    },
+    {
+      pergunta: 'O site envia alertas em tempo real?',
+      resposta: 'Você será alertado imediatamente pelo nosso sistema. Isso permite que você acione vizinhos, familiares ou serviços de emergência mesmo à distância.',
+      expandido: false
+    }
   ];
 
-  enviarMensagem(texto?: string) {
-    const mensagem = texto || this.novaMensagem.trim();
-    if (mensagem === '') return;
-
-    this.mensagens.push({ texto: mensagem, autor: 'eu' });
-
-    this.novaMensagem = '';
-
-    setTimeout(() => {
-      this.mensagens.push({ texto: 'Entendido. Estamos analisando.', autor: 'bot' });
-    }, 1000);
-  }
 
   constructor() { }
 
-  ngOnInit() {
+  ngOnInit() { }
+
+  toggleResposta(index: number) {
+    this.respostasProntas[index].expandido = !this.respostasProntas[index].expandido;
   }
 
 }
+// 'Como saberei se há um vazamento de gás na minha casa?',
+//     'O que devo fazer ao suspeitar de um vazamento de gás?',
+//     'O site envia alertas em tempo real?',
+//     'Preciso ter um sensor para usar o site?',

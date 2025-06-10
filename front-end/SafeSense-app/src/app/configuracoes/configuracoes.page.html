@@ -10,54 +10,35 @@
 <ion-content class="ion-padding">
   <ion-list>
 
-    <ion-item button (click)="abrirPerfil()">
+    <ion-item button>
       <ion-icon slot="start" name="person-outline"></ion-icon>
       <ion-label routerLink="/perfil">Conta</ion-label>
     </ion-item>
 
-    <ion-item button (click)="abrirTemas()" routerLink="/tema">
+    <ion-item button routerLink="/tema">
       <ion-icon slot="start" name="moon-outline"></ion-icon>
       <ion-label>Tema</ion-label>
     </ion-item>
         
 
-    <ion-item button (click)="abrirNotificacoes()" routerLink="/notificacoes">
+    <ion-item button routerLink="/notificacoes" disabled>
       <ion-icon slot="start" name="notifications-outline"></ion-icon>
       <ion-label>Notificações</ion-label>
     </ion-item>
 
-    <ion-item button (click)="abrirIdioma()" routerLink="">
+    <ion-item button disabled>
       <ion-icon slot="start" name="language-outline"></ion-icon>
       <ion-label>Idioma</ion-label>
     </ion-item>
 
-    <ion-item button (click)="abrirPrivacidade()" routerLink="/seguranca">
+    <ion-item button routerLink="/seguranca">
       <ion-icon slot="start" name="shield-checkmark-outline"></ion-icon>
       <ion-label>Privacidade e Segurança</ion-label>
     </ion-item>
 
-    <ion-item button (click)="abrirSobre()">
+    <ion-item button (click)="aboutApp()">
       <ion-icon slot="start" name="information-circle-outline"></ion-icon>
       <ion-label>Sobre o App</ion-label>
-      <ion-modal [isOpen]="isModalOpen">
-    <ng-template>
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>Modal</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="setOpen(false)">Close</ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content class="ion-padding">
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni illum quidem recusandae ducimus quos
-          reprehenderit. Veniam, molestias quos, dolorum consequuntur nisi deserunt omnis id illo sit cum qui. Eaque,
-          dicta.
-        </p>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
     </ion-item>
 
     <ion-item button (click)="logout()">

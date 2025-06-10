@@ -8,26 +8,25 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <div *ngFor="let msg of mensagens" [ngClass]="msg.autor === 'eu' ? 'msg-eu' : 'msg-bot'" class="mensagem">
-    {{ msg.texto }}
-  </div>
 
-  <div class="respostas-prontas">
-    <ion-chip *ngFor="let resposta of respostasProntas" (click)="enviarMensagem(resposta)">
-      {{ resposta }}
-    </ion-chip>
+  <div *ngFor="let item of respostasProntas; let i = index">
+    <div class="pergunta" (click)="toggleResposta(i)">
+      {{ item.pergunta }}
+    </div>
+    <div class="resposta" *ngIf="item.expandido">
+      {{ item.resposta }}
+    </div>
   </div>
+  
 </ion-content>
 
-<ion-footer>
+<!-- <ion-footer>
   <ion-toolbar>
     <ion-item lines="none">
       <ion-input
         [(ngModel)]="novaMensagem"
-        placeholder="Digite sua mensagem"
         (keyup.enter)="enviarMensagem()"
       ></ion-input>
-      <ion-button fill="clear" (click)="enviarMensagem()">Enviar</ion-button>
     </ion-item>
   </ion-toolbar>
-</ion-footer>
+</ion-footer> -->

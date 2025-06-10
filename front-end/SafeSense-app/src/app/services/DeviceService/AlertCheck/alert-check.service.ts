@@ -76,12 +76,28 @@ export class AlertCheckService {
 
 
   private async sendNotification(nivel: string, status: string, id: number) {
+    const mensagem =
+      status === 'Perigo'
+        ? `🔥 Vazamento grave detectado!\nNível do vazamento: ${nivel}\n⚠️ Ação imediata recomendada!`
+        : `🟡 Vazamento moderado detectado.\nNível do vazamento: ${nivel}\n🔍 Acompanhe a situação.`
+    ;
+
     const alert = await this.alertCtrl.create({
+      cssClass: 'custom-alert',
       header: '⚠️ Alerta de Vazamento!',
-      subHeader: `Nível: ${nivel}`,
-      message: `Status: ${status}`,
-      buttons: ['OK'],
+      subHeader: `Status: ${status}`,
+      message: mensagem,
+      buttons: [
+        {
+          text: status === 'Perigo' ? '🔥 OK' : '⚠️ OK',
+          role: 'cancel',
+          cssClass: status === 'Perigo' ? 'danger-button' : 'warning-button'
+        },
+      ]
     });
+
+
+
     await alert.present();
 
     if (!isPlatform('hybrid')) {

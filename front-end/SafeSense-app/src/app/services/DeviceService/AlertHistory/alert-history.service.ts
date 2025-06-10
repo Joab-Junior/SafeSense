@@ -10,6 +10,7 @@ import { AuthHeaderService } from '../../HeaderService/auth-header.service';
 export class AlertHistoryService {
   private apiUrl = environment.apiUrl;
   private listAlertsEndpoint = '/device/list-alerts.php';
+  private clearAlertsEndpoint = '/device/clear-alerts.php';
 
   constructor(private http: HttpClient, private headerService: AuthHeaderService) { }
 
@@ -22,5 +23,13 @@ export class AlertHistoryService {
     const body = { id_usuario };
 
     return this.http.post(`${this.apiUrl}${this.listAlertsEndpoint}`, body, { headers });
+  }
+
+  clearServerHistory(id_usuario: number): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiUrl}${this.clearAlertsEndpoint}`,
+      { id_usuario },
+      { headers: this.headerService.getAppSecret() }
+    );
   }
 }

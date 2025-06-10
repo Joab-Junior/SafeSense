@@ -15,7 +15,7 @@
     </ion-card-header>
     <ion-card-content>
       <p>Leia nossa política de privacidade para entender como seus dados são usados.</p>
-      <ion-button (click)="VPP()" expand="block" color="primary" routerLink="/politica-de-privacidade">
+      <ion-button (click)="VPP()" expand="block" color="primary">
         Ver Política de Privacidade
       </ion-button>
     </ion-card-content>
@@ -28,11 +28,14 @@
     <ion-card-content>
       <ion-item>
         <ion-label>Localização</ion-label>
-        <ion-toggle [(ngModel)]="locationEnabled"></ion-toggle>
+        <ion-toggle [(ngModel)]="locationEnabled" disabled></ion-toggle>
       </ion-item>
       <ion-item>
         <ion-label>Notificações</ion-label>
-        <ion-toggle [(ngModel)]="notificationsEnabled"></ion-toggle>
+        <ion-button expand="block" [color]="notificationsEnabled ? 'success' : 'danger'" [disabled]="!canToggle"
+          (click)="handleNotificationToggle()">
+          {{ notificationsEnabled ? 'Notificações Ativadas' : 'Notificações Desativadas, Ativar Notificações!' }}
+        </ion-button>
       </ion-item>
     </ion-card-content>
   </ion-card>
@@ -42,16 +45,15 @@
       <ion-card-title>Segurança</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <ion-button expand="block" (click)="changePassword()">Alterar Senha</ion-button>
+      <ion-button expand="block" (click)="changePassword()" disabled>Alterar Senha</ion-button>
     </ion-card-content>
   </ion-card>
 
   <ion-card>
     <ion-card-header>
-      <ion-card-title>Gerenciamento de Dados</ion-card-title>
+      <ion-card-title>Danger Zone!</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <ion-button expand="block" color="medium" (click)="exportData()">Exportar meus dados</ion-button>
       <ion-button expand="block" color="danger" (click)="confirmExclution()">Excluir minha conta</ion-button>
     </ion-card-content>
   </ion-card>

@@ -58,6 +58,10 @@ switch ($uri) {
         require __DIR__ . '/auth/profile.php';
     break;
 
+    case '/auth/change-password.php':
+        require __DIR__ . '/auth/change-password.php';
+    break;
+
     case '/device/register-alert.php':
         require __DIR__ . '/device/register-alert.php';
     break;
@@ -68,6 +72,10 @@ switch ($uri) {
 
     case '/device/list-alerts.php':
         require __DIR__ . '/device/list-alerts.php';
+    break;
+
+    case '/device/clear-alerts.php':
+        require __DIR__ . '/device/clear-alerts.php';
     break;
 
     default:

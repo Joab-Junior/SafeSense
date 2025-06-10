@@ -32,16 +32,17 @@
     Agradecemos por utilizar nosso aplicativo!
   </ion-note>
 </ion-content>
-<ion-footer class="rodape">
-    <div class="footer-icons">
-      <ion-button class="icon-button" fill="clear" (click)="voltar()">
-        <ion-icon name="caret-back-outline"></ion-icon>
-      </ion-button>
-      <ion-button class="icon-button" fill="clear" routerLink="/inicio">
-        <ion-icon name="home-outline"></ion-icon>
-      </ion-button>
-      <ion-button class="icon-button" fill="clear" routerLink="/configuracoes">
-        <ion-icon name="settings-outline"></ion-icon>
-      </ion-button>
-    </div>
-  </ion-footer>
+<ion-tab-bar slot="bottom">
+    <ion-tab-button (click)="goBack()" tab="home">
+      <ion-icon name="caret-back-outline"></ion-icon>
+      Voltar
+    </ion-tab-button>
+    <ion-tab-button tab="radio" routerLink="/inicio">
+      <ion-icon name="home-outline"></ion-icon>
+      Inicio
+    </ion-tab-button>
+    <ion-tab-button tab="library" routerLink="/configuracoes">
+      <ion-icon name="settings-outline"></ion-icon>
+      Configurações
+    </ion-tab-button>
+  </ion-tab-bar>

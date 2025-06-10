@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AccountAuthHandleService, AuthAccountData } from '../services/AccountHandle/AccounAuth/account-auth-handle.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { LoadingController, ToastController } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { LoadingController, NavController, ToastController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-entrar',
@@ -19,7 +19,8 @@ export class EntrarPage implements OnInit {
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController,
     private fb: FormBuilder,
-    private router: Router
+    private navCtrl: NavController,
+    private alertCtrl: AlertController
   ) { }
 
   ngOnInit() {
@@ -27,12 +28,18 @@ export class EntrarPage implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
     });
+
+    this.checkAuth()
   }
 
   async login() {
 
     if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/inicio']);
+      this.navCtrl.navigateRoot('/inicio', {
+        animated: true,
+        animationDirection: 'forward'
+      });
+
     }
 
     const { email, password } = this.entrarForm.value;
@@ -57,7 +64,11 @@ export class EntrarPage implements OnInit {
         if (res.status === 'success') {
           console.log('Resposta do login:', res);
           this.showToast('Login realizado com sucesso!');
-          this.router.navigate(['/inicio']);
+          this.navCtrl.navigateRoot('/inicio', {
+            animated: true,
+            animationDirection: 'forward'
+          });
+
         } else {
           console.log('Resposta do login:', res);
           this.showToast(res.message || 'Erro no login.');
@@ -91,4 +102,37 @@ export class EntrarPage implements OnInit {
     }
   }
 
+  async checkAuth() {
+    if (this.authService.isAuthenticated()) {
+      const alert = await this.alertCtrl.create({
+        header: 'Detectamos um usuário logado',
+        message: 'Deseja sair ou voltar ao início?',
+        buttons: [
+          {
+            text: 'Sair',
+            role: 'destructive',
+            handler: () => {
+              this.authService.logout();
+              this.navCtrl.navigateRoot('/', {
+                animated: true,
+                animationDirection: 'back'
+              });
+            }
+          },
+          {
+            text: 'Voltar ao Início',
+            handler: () => {
+              this.navCtrl.navigateRoot('/inicio', {
+                animated: true,
+                animationDirection: 'forward'
+              });
+            }
+          }
+        ],
+        backdropDismiss: false
+      });
+
+      await alert.present();
+    }
+  }
 }

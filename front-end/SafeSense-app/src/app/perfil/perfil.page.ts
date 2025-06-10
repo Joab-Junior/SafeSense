@@ -40,27 +40,4 @@ export class PerfilPage implements OnInit {
     this.navCtrl.back();
   }
 
-  openSettings() {
-    console.log('Abrir Configurações');
-    this.router.navigate(['/configuracoes']);
-  }
-
-  abrirSeguranca() {
-    console.log('Abrir Segurança');
-  }
-
-  abrirNotificacoes() {
-    console.log('Abrir Notificações');
-  }
-
-  abrirInfoConta() {
-    console.log('Abrir Informações da Conta');
-  }
-
-
-  voltarParaPrincipal() {
-    // Redireciona para a tela principal
-    this.navCtrl.navigateRoot('/home');
-  }
-
 }

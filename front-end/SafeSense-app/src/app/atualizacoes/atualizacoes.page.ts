@@ -11,11 +11,13 @@ export class AtualizacoesPage implements OnInit {
 
   constructor(private navCtrl: NavController) { }
     
-    voltar() {
+    goBack() {
       this.navCtrl.back();
     }
+
   
     ngOnInit() {
+      
     }
 
 }

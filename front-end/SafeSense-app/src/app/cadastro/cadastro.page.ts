@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CreateAccountHandleService, CreateAccountData } from '../services/AccountHandle/AccountCreation/create-account-handle.service';
-import { ToastController, LoadingController } from '@ionic/angular';
+import { ToastController, LoadingController, AlertController, NavController } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { passwordValidator } from 'src/utils/validators';
-import { Router } from '@angular/router';
+import { AccountAuthHandleService } from '../services/AccountHandle/AccounAuth/account-auth-handle.service';
 
 @Component({
   selector: 'app-cadastro',
@@ -21,7 +21,9 @@ export class CadastroPage implements OnInit {
     private toastCtrl: ToastController,
     private loadingCtrl: LoadingController,
     private fb: FormBuilder,
-    private router: Router
+    private authService: AccountAuthHandleService,
+    private alertCtrl: AlertController,
+    private navCtrl: NavController
   ) { }
 
   ngOnInit() {
@@ -97,7 +99,10 @@ export class CadastroPage implements OnInit {
         await loading.dismiss();
         if (res.status === 'success') {
           await this.presentToast('Conta criada com sucesso! Faça login.', 'success');
-          this.router.navigate(['/entrar']); // redireciona para a página de login
+          this.navCtrl.navigateRoot('/entrar', {
+            animated: true,
+            animationDirection: 'back'
+          }); // redireciona para a página de login
         } else {
           await this.presentToast(res.message || 'Erro ao criar conta.', 'danger');
         }
@@ -108,5 +113,39 @@ export class CadastroPage implements OnInit {
         await this.presentToast('Erro ao criar conta.', 'danger');
       }
     });
+  }
+
+  async checkAuth() {
+    if (this.authService.isAuthenticated()) {
+      const alert = await this.alertCtrl.create({
+        header: 'Detectamos um usuário logado',
+        message: 'Deseja sair ou voltar ao início?',
+        buttons: [
+          {
+            text: 'Sair',
+            role: 'destructive',
+            handler: () => {
+              this.authService.logout();
+              this.navCtrl.navigateRoot('/', {
+                animated: true,
+                animationDirection: 'back'
+              });
+            }
+          },
+          {
+            text: 'Voltar ao Início',
+            handler: () => {
+              this.navCtrl.navigateRoot('/inicio', {
+                animated: true,
+                animationDirection: 'forward'
+              });
+            }
+          }
+        ],
+        backdropDismiss: false
+      });
+
+      await alert.present();
+    }
   }
 }

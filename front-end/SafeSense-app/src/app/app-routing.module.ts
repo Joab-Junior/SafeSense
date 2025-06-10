@@ -36,11 +36,6 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: 'relatorio',
-    loadChildren: () => import('./relatorio/relatorio.module').then( m => m.RelatorioPageModule),
-    canActivate: [AuthGuard]
-  },
-  {
     path: 'chatbox',
     loadChildren: () => import('./chatbox/chatbox.module').then( m => m.ChatboxPageModule),
     canActivate: [AuthGuard]
@@ -53,6 +48,11 @@ const routes: Routes = [
   {
     path: 'seguranca',
     loadChildren: () => import('./seguranca/seguranca.module').then( m => m.SegurancaPageModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'tema',
+    loadChildren: () => import('./tema/tema.module').then( m => m.TemaPageModule),
     canActivate: [AuthGuard]
   },
   {

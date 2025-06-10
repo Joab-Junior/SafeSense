@@ -17,7 +17,7 @@ export class NotificacoesPage implements OnInit {
 
   constructor(private navCtrl: NavController) { }
     
-    voltar() {
+    goBack() {
       this.navCtrl.back();
     }
 

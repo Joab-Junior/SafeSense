@@ -1,31 +1,32 @@
-
 .rodape {
-    background-color: #f8f8f8;
-    padding: 10px 0;
-  }
+  background-color: #f8f8f8;
+  padding: 10px 0;
+}
 
-  .footer-icons {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-  }
+.footer-icons {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
 
-  .icon-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-  }
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+}
 
-  .icon-button ion-icon {
-    font-size: 24px;
-    color: #333;
-  }
+.icon-button ion-icon {
+  font-size: 24px;
+  color: #333;
+}
 
-  .icon-button:active ion-icon {
-    color: #007bff; /* cor ao clicar */
-  }
-  .center-image {
+.icon-button:active ion-icon {
+  color: #007bff;
+  /* cor ao clicar */
+}
+
+.center-image {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -36,4 +37,32 @@
   max-width: 100%;
   height: auto;
   text-align: center;
+}
+
+.card-section {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.card-header {
+  background-color: #4e54c8;
+}
+
+.card-title {
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.card-content {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.card-footer {
+  justify-content: flex-end;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.card-link {
+  color: var(--ion-color-medium);
+  text-decoration: none;
 }

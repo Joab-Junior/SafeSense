@@ -6,36 +6,47 @@
 
 <ion-content class="ion-padding">
 
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content pullingText="Puxe para atualizar" refreshingSpinner="circles"
+      refreshingText="Atualizando...">
+    </ion-refresher-content>
+  </ion-refresher>
+
   <!-- Se não tem alertas, mostra mensagem -->
-  <div *ngIf="alertas.length === 0" class="ion-text-center">
+  <div *ngIf="alerts.length === 0" class="ion-text-center">
     <ion-icon name="flame-outline" size="large" color="danger"></ion-icon>
     <h2>Nenhum histórico encontrado</h2>
     <p>Até o momento, não há registros de vazamentos de gás neste aplicativo.</p>
   </div>
 
   <!-- Se tem alertas, mostra lista -->
-  <ion-list *ngIf="alertas.length > 0">
-    <ion-item *ngFor="let alerta of alertas">
+  <ion-list *ngIf="alerts.length > 0">
+    <ion-item *ngFor="let alert of alerts">
       <ion-label>
-        <h3>Nível de Gás: {{ alerta.nivel_gas }}</h3>
-        <p>Status: {{ alerta.st_alerta }}</p>
-        <p>Data: {{ alerta.dt_alerta | date:'dd/MM/yyyy HH:mm:ss' }}</p>
+        <h3>Nível de Gás: {{ alert.nivel_gas }}</h3>
+        <p>Status: {{ alert.st_alerta }}</p>
+        <p>Data: {{ alert.dt_alerta | date:'dd/MM/yyyy HH:mm:ss' }}</p>
       </ion-label>
     </ion-item>
   </ion-list>
 
+  <ion-button color="danger" expand="full" (click)="confirmClearAlertHistory()" *ngIf="alerts.length > 0">
+    🧹 Limpar Histórico de Alertas
+  </ion-button>
+
 </ion-content>
 
-<ion-footer class="rodape">
-  <div class="footer-icons">
-    <ion-button class="icon-button" fill="clear" (click)="goBack()">
-      <ion-icon name="caret-back-outline"></ion-icon>
-    </ion-button>
-    <ion-button class="icon-button" fill="clear" routerLink="/inicio">
-      <ion-icon name="home-outline"></ion-icon>
-    </ion-button>
-    <ion-button class="icon-button" fill="clear" routerLink="/configuracoes">
-      <ion-icon name="settings-outline"></ion-icon>
-    </ion-button>
-  </div>
-</ion-footer>
+<ion-tab-bar slot="bottom">
+  <ion-tab-button (click)="goBack()" tab="home">
+    <ion-icon name="caret-back-outline"></ion-icon>
+    Voltar
+  </ion-tab-button>
+  <ion-tab-button tab="radio" routerLink="/inicio">
+    <ion-icon name="home-outline"></ion-icon>
+    Inicio
+  </ion-tab-button>
+  <ion-tab-button tab="library" routerLink="/configuracoes">
+    <ion-icon name="settings-outline"></ion-icon>
+    Configurações
+  </ion-tab-button>
+</ion-tab-bar>
