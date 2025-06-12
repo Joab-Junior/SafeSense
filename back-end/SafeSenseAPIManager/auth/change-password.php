@@ -40,9 +40,21 @@
         exit;
     }
 
+    // instancia o handler do JWT
+    $jwtHandler = new JWTHandler();
+
     $token = trim(str_replace('Bearer ', '', $authHeader));
-    $userId = validateToken($token);
-    if (!$userId) {
+
+    try {
+        $decoded = $jwtHandler->validateToken($token);
+        // $decoded é um objeto com os dados do payload JWT
+        $userId = $decoded->user_id ?? null;
+        if (!$userId) {
+            http_response_code(401);
+            jsonResponse("error", "Token inválido: usuário não encontrado no token.");
+            exit;
+        }
+    } catch (Exception $e) {
         http_response_code(401);
         jsonResponse("error", "Token inválido ou expirado.");
         exit;

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AccountAuthHandleService } from './services/AccountHandle/AccounAuth/account-auth-handle.service';
-import { Platform } from '@ionic/angular';
+import { AlertController, Platform, ToastController } from '@ionic/angular';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { AlertCheckService } from './services/DeviceService/AlertCheck/alert-check.service';
 
@@ -16,7 +16,9 @@ export class AppComponent {
     private router: Router,
     private authService: AccountAuthHandleService,
     private platform: Platform,
-    private alertService: AlertCheckService
+    private alertService: AlertCheckService,
+    private alertCtrl: AlertController,
+    private toastCtrl: ToastController
   ) {
     this.initializeApp();
     this.checkLoginStatus();
@@ -39,11 +41,50 @@ export class AppComponent {
     await this.platform.ready();
 
     const permission = await LocalNotifications.checkPermissions();
+
     if (permission.display !== 'granted') {
-      const result = await LocalNotifications.requestPermissions();
-      if (result.display !== 'granted') {
-        console.warn('Permissão para notificações negada');
-      }
+      const alert = await this.alertCtrl.create({
+        header: 'Notificações desativadas!',
+        message: 'As notificações é uma parte essencial do aplicativo, sem ela, você não recebe alertas de vazamentos em tempo real! Ative manualmente caso necessário.',
+        buttons: [
+          {
+            text: 'Cancelar',
+            handler: async () => {
+              // Exibe toast informando como ativar manualmente
+              const toast = await this.toastCtrl.create({
+                message: 'Você pode ativar as notificações nas configurações de segurança do aplicativo.',
+                duration: 4000,
+                position: 'bottom',
+                color: 'warning',
+              });
+
+              await toast.present();
+            },
+            role: 'cancel',
+          },
+          {
+            text: 'Ativar',
+            handler: async () => {
+              const result = await LocalNotifications.requestPermissions();
+              if (result.display !== 'granted') {
+                console.warn('Permissão para notificações foi negada pelo usuário.');
+
+                // Exibe toast informando como ativar manualmente
+                const toast = await this.toastCtrl.create({
+                  message: 'Você pode ativar as notificações nas configurações de segurança do aplicativo.',
+                  duration: 4000,
+                  position: 'bottom',
+                  color: 'warning',
+                });
+
+                await toast.present();
+              }
+            },
+          },
+        ],
+      });
+
+      await alert.present();
     }
   }
 

@@ -53,8 +53,7 @@ export class HistoricoPage {
 
   doRefresh(event: any) {
     this.listAlerts();
-    event.target.complete();
-
+    
     setTimeout(() => {
       event.target.complete();
     }, 500);

@@ -37,6 +37,14 @@ export class SegurancaPage implements OnInit {
     this.checkNotificationPermission();
   }
 
+  doRefresh(event: any) {
+    this.checkNotificationPermission();
+
+    setTimeout(() => {
+      event.target.complete();
+    }, 500);
+  }
+
   async changePassword() {
     const alert = await this.alertCtrl.create({
       header: 'Alterar Senha',
@@ -48,27 +56,23 @@ export class SegurancaPage implements OnInit {
         { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Salvar',
-          handler: async (data) => {
-            const loading = await this.toastCtrl.create({
-              message: 'Processando...',
-              duration: 1000,
-              position: 'bottom'
-            });
-            await loading.present();
+          handler: (data) => {
+            if (!data.current || !data.new) {
+              this.presentToast('Preencha todos os campos!', 'danger');
+              return false;
+            }
 
-            this.changePasswordService
-              .changePassword(data.current, data.new)
-              .subscribe({
-                next: async (res) => {
-                  await loading.dismiss();
-                  this.presentToast(res.message, 'success');
-                },
-                error: async (err) => {
-                  await loading.dismiss();
-                  const msg = err?.error?.message || 'Erro ao alterar senha.';
-                  this.presentToast(msg, 'danger');
-                },
-              });
+            this.changePasswordService.changePassword(data.current, data.new).subscribe({
+              next: async (res) => {
+                this.presentToast(res.message, 'success');
+              },
+              error: async (err) => {
+                const msg = err?.error?.message || 'Erro ao alterar senha.';
+                this.presentToast(msg, 'danger');
+              },
+            });
+
+            return true;
           },
         },
       ],
@@ -76,7 +80,6 @@ export class SegurancaPage implements OnInit {
 
     await alert.present();
   }
-
 
   async checkNotificationPermission() {
     const result = await LocalNotifications.checkPermissions();
@@ -90,28 +93,31 @@ export class SegurancaPage implements OnInit {
   }
 
   async handleNotificationToggle() {
+  const result = await LocalNotifications.requestPermissions();
+
+  if (result.display === 'granted') {
+    this.notificationsEnabled = true;
     this.canToggle = false;
+    this.presentToast('Notificações ativadas com sucesso!', 'success');
+  } else {
+    this.notificationsEnabled = false;
+    this.canToggle = true;
+    console.warn('Usuário negou permissão');
 
-    const result = await LocalNotifications.requestPermissions();
-    if (result.display === 'granted') {
-      this.notificationsEnabled = true;
+    const alert = await this.alertCtrl.create({
+      header: 'Permissão Negada',
+      message: 'Parece que ouve algum problema ao ativar as notificações, ative manualmente caso precise!',
+      buttons: [
+        {
+          text: 'OK',
+          role: 'cancel'
+        },
+      ]
+    });
 
-      await LocalNotifications.schedule({
-        notifications: [
-          {
-            id: 1,
-            title: 'Notificações Ativadas',
-            body: 'Você receberá alertas importantes!',
-            schedule: { at: new Date(new Date().getTime() + 1000) }
-          }
-        ]
-      });
-    } else {
-      this.notificationsEnabled = false;
-      this.canToggle = true;
-      console.warn('Usuário negou permissão');
-    }
+    await alert.present();
   }
+}
 
   async VPP() {
     const alert = await this.alertCtrl.create({

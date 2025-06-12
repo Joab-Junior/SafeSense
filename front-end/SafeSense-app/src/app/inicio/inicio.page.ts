@@ -34,7 +34,6 @@ export class InicioPage implements OnInit {
 
   doRefresh(event: any) {
     this.listAlerts();
-    event.target.complete();
 
     setTimeout(() => {
       event.target.complete();

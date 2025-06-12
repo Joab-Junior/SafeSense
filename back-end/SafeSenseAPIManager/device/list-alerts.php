@@ -64,6 +64,15 @@
     $result = $stmt->get_result();
     $rows = $result->fetch_all(MYSQLI_ASSOC);
 
+    // ✅ Conversão de UTC para horário de Brasília
+    foreach ($rows as &$row) {
+        if (isset($row['dt_alerta'])) {
+            $utcDate = new DateTime($row['dt_alerta'], new DateTimeZone('UTC'));
+            $utcDate->setTimezone(new DateTimeZone('America/Sao_Paulo'));
+            $row['dt_alerta'] = $utcDate->format('Y-m-d H:i:s');
+        }
+    }
+
     if ($rows && count($rows) > 0) {
         jsonResponse('success', 'Alertas encontrados', $rows);
     } else {

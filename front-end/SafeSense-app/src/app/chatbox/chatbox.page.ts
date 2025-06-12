@@ -15,7 +15,7 @@ export class ChatPage {
   respostasProntas = [
     {
       pergunta: 'Como saberei se há um vazamento de gás na minha casa?',
-      resposta: '',
+      resposta: 'Assim que ocorre um vazamento de gás glp, o sensor MQ-4 o detecta, acionando simultaneamente o LED e o buzzer passivo, gerando um alerta presencial. Além disso, a notificação de alerta é enviada pelo WhatsApp e para o aplicativo.',
       expandido: false,
     },
     {
@@ -24,12 +24,12 @@ export class ChatPage {
       expandido: false
     },
     {
-      pergunta: 'O site envia alertas em tempo real?',
+      pergunta: 'O aplicativo envia alertas em tempo real?',
       resposta: 'Sim, se você tiver um sensor de gás conectado ao nosso sistema, os alertas são enviados em tempo real por notificações no aplicativo.',
       expandido: false
     },
     {
-      pergunta: 'O site envia alertas em tempo real?',
+      pergunta: 'O que acontece se eu estiver fora de casa durante o vazamento?',
       resposta: 'Você será alertado imediatamente pelo nosso sistema. Isso permite que você acione vizinhos, familiares ou serviços de emergência mesmo à distância.',
       expandido: false
     }
