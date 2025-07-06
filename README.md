@@ -1,6 +1,6 @@
 # SafeSense
 
-**SafeSense**: Sistema de detecção de vazamento de gás inflamável, com um dispositivo físico integrado a um aplicativo mobile.
+**SafeSense**: Sistema de detecção de vazamento de gás inflamável, com um dispositivo físico integrado a um aplicativo mobile (projeto em evolução constante!).
 
 ---
 
